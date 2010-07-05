@@ -28,6 +28,7 @@ namespace org.freedesktop.IBus
 		}
 	}
 
+	// TODO rename this interface to IBus
 	[Interface("org.freedesktop.IBus")]
 	[CLSCompliant(false)]
 	public interface IIBus : Introspectable
@@ -80,7 +81,7 @@ namespace org.freedesktop.IBus
 
 		void Disable();
 
-		[return: Argument("isEnabled")]
+		[return: Argument("enabled")]
 		bool IsEnabled();
 
 		void SetCapabilities(UInt32 caps);
