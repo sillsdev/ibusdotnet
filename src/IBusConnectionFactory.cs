@@ -88,20 +88,24 @@ namespace IBusDotNet
 			throw new ApplicationException(String.Format("IBUS config file : {0} doesn't contain {1} token", filename, IBUS_ADDRESS));
 		}
 
+		static Connection singleConnection = null;
 		/// <summary>
 		/// Create a DBus to connection to the IBus system in use.
 		/// </summary>
 		public static NDesk.DBus.Connection Create()
 		{
+			if (singleConnection != null)
+				return singleConnection;
+
 			// if Enviroment var IBUS_ADDRESS doesn't exist then attempt to read it from IBus server settings file.
 			string socketName = System.Environment.GetEnvironmentVariable(ENV_IBUS_ADDRESS);
 			if (String.IsNullOrEmpty(socketName))
 				socketName = GetSocket(IBusConfigFilename());
 
 			// Equivalent to having $DBUS_SESSION_BUS_ADDRESS set
-			Connection connnection = Bus.Open(socketName);
+			singleConnection = Bus.Open(socketName);
 
-			return connnection;
+			return singleConnection;
 		}
 	}
 }
