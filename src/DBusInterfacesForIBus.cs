@@ -56,6 +56,17 @@ namespace org.freedesktop.IBus
 		object Ping(object data);
 	}
 
+	public class Capabilities
+	{
+		public const uint PreeditText = 1;
+		public const uint AuxText = 2;
+		public const uint LookupTable = 4;
+		public const uint Focus = 8;
+		public const uint Property = 16;
+		public const uint SurroundingText = 32;
+	}
+
+
 	public delegate void CommitTextHandler(object text);
 	public delegate void ShowPreditTextHandler();
 	public delegate void UpdatePreeditTextHandler(object text, uint cursor_pos, bool visible);

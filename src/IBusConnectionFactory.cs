@@ -91,19 +91,26 @@ namespace IBusDotNet
 		static Connection singleConnection = null;
 		/// <summary>
 		/// Create a DBus to connection to the IBus system in use.
+		/// Returns null if it can't conenct to ibus.
 		/// </summary>
 		public static NDesk.DBus.Connection Create()
 		{
 			if (singleConnection != null)
 				return singleConnection;
 
-			// if Enviroment var IBUS_ADDRESS doesn't exist then attempt to read it from IBus server settings file.
-			string socketName = System.Environment.GetEnvironmentVariable(ENV_IBUS_ADDRESS);
-			if (String.IsNullOrEmpty(socketName))
-				socketName = GetSocket(IBusConfigFilename());
+			try
+			{
+				// if Enviroment var IBUS_ADDRESS doesn't exist then attempt to read it from IBus server settings file.
+				string socketName = System.Environment.GetEnvironmentVariable(ENV_IBUS_ADDRESS);
+				if (String.IsNullOrEmpty(socketName))
+					socketName = GetSocket(IBusConfigFilename());
 
-			// Equivalent to having $DBUS_SESSION_BUS_ADDRESS set
-			singleConnection = Bus.Open(socketName);
+				// Equivalent to having $DBUS_SESSION_BUS_ADDRESS set
+				singleConnection = Bus.Open(socketName);
+			}
+			catch(System.Exception) { } // ignore - ibus may not be running.
+
+
 
 			return singleConnection;
 		}

@@ -29,60 +29,70 @@ namespace Test
 		protected override void OnCreateControl()
 		{
 			connection = IBusConnectionFactory.Create();
-			ibus = new IBusDotNet.InputBusWrapper(connection);
-			inputContext = ibus.InputBus.CreateInputContext("MyTextBox");
+			if (connection != null)
+			{
+				ibus = new IBusDotNet.InputBusWrapper(connection);
+				inputContext = ibus.InputBus.CreateInputContext("MyTextBox");
 
-			//enum
-			// 1 PreEdit
-			// 2 Aux
-			// 4 LookupTable
-			// 8 Focus
-			// 16 Property
-			// 32 Surrounding_Text
-			// This bittable enum controls if Client runs in on-the-spot, over-the-spot, ect.
-			// set to 15 for on the spot
-			inputContext.SetCapabilities(15);
+				inputContext.SetCapabilities(Capabilities.PreeditText |
+											 Capabilities.AuxText |
+											 Capabilities.LookupTable |
+											 Capabilities.Focus);
 
-			// Engine can be programatically selected by:
-			// inputContext.SetEngine("pinyin");
+				// Engine can be programatically selected by:
+				// inputContext.SetEngine("pinyin");
 
-			inputContext.Enable();
+				inputContext.Enable();
 
-			// Handle some important events:
-			inputContext.CommitText += CommitTextEventHandler;
-			inputContext.UpdatePreeditText += UpdatePreeditTextEventHandler;
-			inputContext.ShowPreeditText += ShowPreeditTextEventHandler;
-			inputContext.HidePreeditText += HidePreeditTextEventHandler;
+				// Handle some important events:
+				inputContext.CommitText += CommitTextEventHandler;
+				inputContext.UpdatePreeditText += UpdatePreeditTextEventHandler;
+				inputContext.ShowPreeditText += ShowPreeditTextEventHandler;
+				inputContext.HidePreeditText += HidePreeditTextEventHandler;
+			}
+			else
+			{
+				MessageBox.Show("Error couldn't connect to IBus. Is Ibus running?");
+			}
 
 			base.OnCreateControl();
 		}
 
 		protected override void OnGotFocus(EventArgs e)
 		{
-			inputContext.FocusIn();
+			if (inputContext != null)
+			{
+				inputContext.FocusIn();
+			}
 			base.OnGotFocus(e);
 		}
 
 		protected override void OnLostFocus(EventArgs e)
 		{
-			inputContext.FocusOut();
+			if (inputContext != null)
+			{
+				inputContext.FocusOut();
+			}
 			base.OnLostFocus(e);
 		}
 
 		protected override bool IsInputKey(Keys keyData)
 		{
-			// Ensure some keys which dont get sent as WM_CHAR are sent to the inputContext.
-			switch (keyData) {
-			case Keys.Delete:
-			case Keys.Up:
-			case Keys.Down:
-			case Keys.Left:
-			case Keys.Right:
-			case Keys.Escape:
-				if (inputContext.ProcessKeyEvent((uint)keyData, 0, 0)) {
-					return true;
+			if (inputContext != null)
+			{
+				// Ensure some keys which dont get sent as WM_CHAR are sent to the inputContext.
+				switch (keyData) {
+				case Keys.Delete:
+				case Keys.Up:
+				case Keys.Down:
+				case Keys.Left:
+				case Keys.Right:
+				case Keys.Escape:
+					if (inputContext.ProcessKeyEvent((uint)keyData, 0, 0)) {
+						return true;
+					}
+					break;
 				}
-				break;
 			}
 
 			return base.IsInputKey(keyData);
@@ -93,15 +103,18 @@ namespace Test
 
 		protected override void WndProc(ref Message msg)
 		{
-			switch (msg.Msg) {
-			case WM_CHAR:
-				if (inputContext.ProcessKeyEvent((uint)msg.WParam, 0, 0))
-					return;
-				break;
-			case WM_DESTROY:
-				if (connection != null)
-					connection.Close();
-				break;
+			if (inputContext != null)
+			{
+				switch (msg.Msg) {
+				case WM_CHAR:
+					if (inputContext.ProcessKeyEvent((uint)msg.WParam, 0, 0))
+						return;
+					break;
+				case WM_DESTROY:
+					if (connection != null)
+						connection.Close();
+					break;
+				}
 			}
 
 			base.WndProc(ref msg);
