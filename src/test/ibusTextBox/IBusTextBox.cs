@@ -33,6 +33,7 @@ namespace Test
 			{
 				ibus = new IBusDotNet.InputBusWrapper(connection);
 				inputContext = ibus.InputBus.CreateInputContext("MyTextBox");
+				// Console.WriteLine(inputContext.Introspect());
 
 				inputContext.SetCapabilities(Capabilities.PreeditText |
 											 Capabilities.AuxText |
@@ -49,6 +50,7 @@ namespace Test
 				inputContext.UpdatePreeditText += UpdatePreeditTextEventHandler;
 				inputContext.ShowPreeditText += ShowPreeditTextEventHandler;
 				inputContext.HidePreeditText += HidePreeditTextEventHandler;
+				inputContext.ForwardKeyEvent += ForwardKeyEventHandler;
 			}
 			else
 			{
@@ -88,9 +90,8 @@ namespace Test
 				case Keys.Left:
 				case Keys.Right:
 				case Keys.Escape:
-					if (inputContext.ProcessKeyEvent((uint)keyData, 0, 0)) {
-						return true;
-					}
+					inputContext.Reset();
+					return true;
 					break;
 				}
 			}
@@ -158,6 +159,12 @@ namespace Test
 				base.WndProc(ref m);
 			}
 		}
+
+		void ForwardKeyEventHandler (uint keyval, uint keycode, uint state)
+		{
+
+		}
+
 		#endregion
 	}
 
