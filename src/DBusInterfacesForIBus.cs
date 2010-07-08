@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using NDesk.DBus;
 using org.freedesktop.DBus;
 
-namespace org.freedesktop.IBus
+namespace IBusDotNet
 {
 	// element type returned in array by ListEngines/ListActiveEngines
 	// dbus type: (sa{sv}ssssssss/*u*/)

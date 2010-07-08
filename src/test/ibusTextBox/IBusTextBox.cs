@@ -1,7 +1,6 @@
 using System;
 using System.Windows.Forms;
 using IBusDotNet;
-using org.freedesktop.IBus;
 
 // Ensure when running this test program on mono that environment variable MONO_WINFORMS_XIM_STYLE="disabled"
 // This ensures X input methods aren't running.
@@ -92,7 +91,6 @@ namespace Test
 				case Keys.Escape:
 					inputContext.Reset();
 					return true;
-					break;
 				}
 			}
 

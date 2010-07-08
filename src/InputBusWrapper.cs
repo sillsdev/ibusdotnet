@@ -1,21 +1,20 @@
 using NDesk.DBus;
-using org.freedesktop.IBus;
 
 namespace IBusDotNet
 {
 	public class InputBusWrapper
 	{
-		org.freedesktop.IBus.IIBus _inputBus;
+		IIBus _inputBus;
 
 		public InputBusWrapper(NDesk.DBus.Connection connection)
 		{
-			_inputBus = connection.GetObject<org.freedesktop.IBus.IIBus>("org.freedesktop.IBus", new ObjectPath("/org/freedesktop/IBus"));
+			_inputBus = connection.GetObject<IIBus>("org.freedesktop.IBus", new ObjectPath("/org/freedesktop/IBus"));
 		}
 
 		/// <summary>
-		/// Allow Access to the underlying org.freedesktop.IBus.IIBus
+		/// Allow Access to the underlying IIBus
 		/// </summary>
-		public org.freedesktop.IBus.IIBus InputBus {
+		public IIBus InputBus {
 			get { return _inputBus; }
 		}
 		/// <summary>
