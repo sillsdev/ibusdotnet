@@ -178,6 +178,15 @@ namespace IBusDotNet
 		public string TypeName;
 		public IDictionary<string, object> b;
 		public string Text;
-		public object d;
+		public object AttrList; // IBusAttrList
+	}
+
+	// dbus type: (sa{sv}av)
+	[CLSCompliant(false)]
+	public struct IBusAttrList
+	{
+		public string TypeName;
+		public IDictionary<string, object> b;
+		public object[] c;
 	}
 }
