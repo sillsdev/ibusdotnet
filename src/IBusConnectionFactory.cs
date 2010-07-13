@@ -110,9 +110,15 @@ namespace IBusDotNet
 			}
 			catch(System.Exception) { } // ignore - ibus may not be running.
 
-
-
 			return singleConnection;
+		}
+
+		public static void DestroyConnection()
+		{
+			if (singleConnection != null)
+				singleConnection.Close();
+
+			singleConnection = null;
 		}
 	}
 }
