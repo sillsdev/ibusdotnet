@@ -19,7 +19,7 @@ namespace IBusDotNet
 		public string author;
 		public string icon;
 		public string layout;
-		/* public UInt32 rank; rank isn't in lucid ibus yet */
+		public UInt32 rank; //rank is included in lucid ibus!
 
 		public override string ToString()
 		{
