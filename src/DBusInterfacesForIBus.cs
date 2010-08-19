@@ -5,8 +5,38 @@ using org.freedesktop.DBus;
 
 namespace IBusDotNet
 {
+
 	// element type returned in array by ListEngines/ListActiveEngines
-	// dbus type: (sa{sv}ssssssss/*u*/)
+	// dbus type: (sa{sv}ssssssss)
+	public struct IBusEngineDesc_v1
+	{
+		public string a;
+		public IDictionary<string, object> b;
+		public string longname;
+		public string name;
+		public string description;
+		public string language;
+		public string license;
+		public string author;
+		public string icon;
+		public string layout;
+
+		public override string ToString()
+		{
+			return string.Format("[IBusEngineDesc] '{0}' '{1}' \nname:'{2}' \nlongname:'{3}' \ndescription:'{4}' \nlanguage:'{5}' \nlicense:'{6}' \nauthor:'{7}' \nicon:'{8}' \nlayout:'{9}' ", a, b, name, longname, description, language, license, author, icon,
+			layout);
+		}
+	}
+
+
+	// Ibus dbus api changes without as far as I can tell
+	// easyly identifiable version changes.
+	// So currenly I am providing older version of these structs to deal with
+	// older versions of ibus.
+	// older versions have a _v[number] affix.
+
+	// element type returned in array by ListEngines/ListActiveEngines
+	// dbus type: (sa{sv}ssssssssu)
 	public struct IBusEngineDesc
 	{
 		public string a;
@@ -19,12 +49,12 @@ namespace IBusDotNet
 		public string author;
 		public string icon;
 		public string layout;
-		public UInt32 rank; //rank is included in lucid ibus!
+		public UInt32 rank;
 
 		public override string ToString()
 		{
-			return string.Format("[IBusEngineDesc] '{0}' '{1}' \nname:'{2}' \nlongname:'{3}' \ndescription:'{4}' \nlanguage:'{5}' \nlicense:'{6}' \nauthor:'{7}' \nicon:'{8}' \nlayout:'{9}' ", a, b, name, longname, description, language, license, author, icon,
-			layout);
+			return string.Format("[IBusEngineDesc] '{0}' '{1}' \nname:'{2}' \nlongname:'{3}' \ndescription:'{4}' \nlanguage:'{5}' \nlicense:'{6}' \nauthor:'{7}' \nicon:'{8}' \nlayout:'{9}' \nrant:{10}", a, b, name, longname, description, language, license, author, icon,
+			layout, rank);
 		}
 	}
 
