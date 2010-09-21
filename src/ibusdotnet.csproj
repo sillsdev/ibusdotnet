@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{1E444C80-2052-4B9F-9EF3-4789B7127781}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>ibusdotnet</RootNamespace>
+    <RootNamespace>IBusDotNet</RootNamespace>
     <AssemblyName>ibusdotnet</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
@@ -42,6 +42,7 @@
     <Compile Include="IBusConnectionFactory.cs" />
     <Compile Include="InputBusWrapper.cs" />
     <Compile Include="InputContextWrapper.cs" />
+    <Compile Include="IBusConnection.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

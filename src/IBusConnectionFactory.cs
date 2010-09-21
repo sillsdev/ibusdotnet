@@ -88,15 +88,18 @@ namespace IBusDotNet
 			throw new ApplicationException(String.Format("IBUS config file : {0} doesn't contain {1} token", filename, IBUS_ADDRESS));
 		}
 
-		static Connection singleConnection = null;
+		static IBusConnection singleConnection = null;
 		/// <summary>
 		/// Create a DBus to connection to the IBus system in use.
 		/// Returns null if it can't conenct to ibus.
 		/// </summary>
-		public static NDesk.DBus.Connection Create()
+		public static IBusConnection Create()
 		{
 			if (singleConnection != null)
+			{
+				singleConnection.AddRef();
 				return singleConnection;
+			}
 
 			try
 			{
@@ -106,19 +109,23 @@ namespace IBusDotNet
 					socketName = GetSocket(IBusConfigFilename());
 
 				// Equivalent to having $DBUS_SESSION_BUS_ADDRESS set
-				singleConnection = Bus.Open(socketName);
+				singleConnection = new IBusConnection(Bus.Open(socketName));
+				singleConnection.Disposed += HandleSingleConnectionDisposed;
 			}
 			catch(System.Exception) { } // ignore - ibus may not be running.
 
 			return singleConnection;
 		}
 
+		private static void HandleSingleConnectionDisposed (object sender, EventArgs e)
+		{
+			singleConnection = null;
+		}
+
 		public static void DestroyConnection()
 		{
 			if (singleConnection != null)
 				singleConnection.Close();
-
-			singleConnection = null;
 		}
 	}
 }

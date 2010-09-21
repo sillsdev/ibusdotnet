@@ -11,9 +11,9 @@ namespace IBusDotNet
 		/// inputContextName needs to be the name of specfic instance of the input context.
 		/// For example "/org/freedesktop/IBus/InputContext_15"
 		/// </summary>
-		public InputContextWrapper(NDesk.DBus.Connection connection, string inputContextName)
+		public InputContextWrapper(IBusConnection connection, string inputContextName)
 		{
-			_inputContext = connection.GetObject<InputContext>("org.freedesktop.DBus", new ObjectPath(inputContextName));
+			_inputContext = ((NDesk.DBus.Connection)connection).GetObject<InputContext>("org.freedesktop.DBus", new ObjectPath(inputContextName));
 		}
 
 		/// <summary>

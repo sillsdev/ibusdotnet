@@ -9,7 +9,7 @@ namespace Test
 {
 	public class IBusTextBox : TextBox
 	{
-		NDesk.DBus.Connection connection = null;
+		IBusConnection connection = null;
 		InputContext inputContext = null;
 		IBusDotNet.InputBusWrapper ibus = null;
 
@@ -19,6 +19,18 @@ namespace Test
 		public IBusTextBox(TextBox textBox)
 		{
 			preeditTextBox = textBox;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (connection != null)
+					connection.Dispose();
+			}
+			connection = null;
+
+			base.Dispose(disposing);
 		}
 
 		#region overrides of winform methods.

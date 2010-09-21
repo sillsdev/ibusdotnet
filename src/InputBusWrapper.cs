@@ -6,9 +6,9 @@ namespace IBusDotNet
 	{
 		IIBus _inputBus;
 
-		public InputBusWrapper(NDesk.DBus.Connection connection)
+		public InputBusWrapper(IBusConnection connection)
 		{
-			_inputBus = connection.GetObject<IIBus>("org.freedesktop.IBus", new ObjectPath("/org/freedesktop/IBus"));
+			_inputBus = ((NDesk.DBus.Connection)connection).GetObject<IIBus>("org.freedesktop.IBus", new ObjectPath("/org/freedesktop/IBus"));
 		}
 
 		/// <summary>
