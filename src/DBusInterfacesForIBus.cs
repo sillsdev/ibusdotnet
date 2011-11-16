@@ -150,24 +150,25 @@ namespace IBusDotNet
 
 
 	public delegate void CommitTextHandler(object text);
-	public delegate void EnabledHandler();
-	public delegate void DisabledHandler();
-	public delegate void ForwardKeyEventHandler(uint keyval, uint keycode, uint state);
-	public delegate void UpdatePreeditTextHandler(object text, uint cursor_pos, bool visible);
-	public delegate void ShowPreditTextHandler();
-	public delegate void HidePreditTextHandler();
-	public delegate void UpdateAuxiliaryTextHandler(object text, bool visible);
-	public delegate void ShowAuxiliaryTextHandler();
-	public delegate void HideAuxiliaryTextHandler();
-	public delegate void UpdateLookupTableHandler(object text, bool visible);
-	public delegate void ShowLookupTableHandler();
-	public delegate void HideLookupTableHandler();
-	public delegate void PageUpLookupTableHandler();
-	public delegate void PageDownLookupTableHandler();
-	public delegate void CursorUpLookupTableHandler();
 	public delegate void CursorDownLookupTableHandler();
+	public delegate void CursorUpLookupTableHandler();
+	public delegate void DeleteSurroundingTextHandler(int offset, uint nChars);
+	public delegate void DisabledHandler();
+	public delegate void EnabledHandler();
+	public delegate void ForwardKeyEventHandler(uint keyval, uint keycode, uint state);
+	public delegate void HideAuxiliaryTextHandler();
+	public delegate void HideLookupTableHandler();
+	public delegate void HidePreditTextHandler();
+	public delegate void PageDownLookupTableHandler();
+	public delegate void PageUpLookupTableHandler();
 	public delegate void RegisterPropertiesHandler(object props);
-	public delegate void UpdatePropertyPropertiesHandler(object props);
+	public delegate void ShowAuxiliaryTextHandler();
+	public delegate void ShowLookupTableHandler();
+	public delegate void ShowPreditTextHandler();
+	public delegate void UpdateAuxiliaryTextHandler(object text, bool visible);
+	public delegate void UpdateLookupTableHandler(object text, bool visible);
+	public delegate void UpdatePreeditTextHandler(object text, uint cursor_pos, bool visible);
+	public delegate void UpdatePropertyHandler(object props);
 
 	// TODO: add more events for the rest of the signals
 	[Interface("org.freedesktop.IBus.InputContext")]
@@ -177,6 +178,10 @@ namespace IBusDotNet
 		bool ProcessKeyEvent(uint keyval, uint keycode, uint state);
 
 		void SetCursorLocation(int x, int y, int w, int h);
+
+		void SetCapabilities(UInt32 caps);
+
+		void PropertyActivate(object prop_name, Int32 state);
 
 		void FocusIn();
 
@@ -191,16 +196,16 @@ namespace IBusDotNet
 		[return: Argument("enabled")]
 		bool IsEnabled();
 
-		void SetCapabilities(UInt32 caps);
-
 		void SetEngine(string name);
 
+		// the next two methods are not in the 1.3.7/1.3.9 API
 		[return: Argument("desc")]
 		object GetEngine();
 
 		void Destroy();
 
 		event CommitTextHandler CommitText;
+		event DeleteSurroundingTextHandler DeleteSurroundingText;
 		event EnabledHandler Enabled;
 		event DisabledHandler Disabled;
 		event ForwardKeyEventHandler ForwardKeyEvent;
@@ -218,7 +223,7 @@ namespace IBusDotNet
 		event CursorUpLookupTableHandler CursorUpLookupTable;
 		event CursorDownLookupTableHandler CursorDownLookupTable;
 		event RegisterPropertiesHandler RegisterProperties;
-		event UpdatePropertyPropertiesHandler UpdatePropertyProperties;
+		event UpdatePropertyHandler UpdateProperty;
 
 	}
 
