@@ -8,7 +8,7 @@ namespace IBusDotNet
 
 	// element type returned in array by ListEngines/ListActiveEngines
 	// dbus type: (sa{sv}ssssssss)
-	public struct IBusEngineDesc_v1
+	internal struct IBusEngineDesc_v1
 	{
 		public string a;
 		public IDictionary<string, object> b;
@@ -37,7 +37,7 @@ namespace IBusDotNet
 
 	// element type returned in array by ListEngines/ListActiveEngines
 	// dbus type: (sa{sv}ssssssssu)
-	public struct IBusEngineDesc_v2
+	internal struct IBusEngineDesc_v2
 	{
 		public string a;
 		public IDictionary<string, object> b;
@@ -61,7 +61,7 @@ namespace IBusDotNet
 	// This corresponds to ibus 1.3.7.
 	// element type returned in array by ListEngines/ListActiveEngines
 	// dbus type: (sa{sv}sssssssssu)
-	public struct IBusEngineDesc_v3
+	internal struct IBusEngineDesc_v3
 	{
 		public string a;
 		public IDictionary<string, object> b;
@@ -85,9 +85,9 @@ namespace IBusDotNet
 
 	// This corresponds to ibus 1.4.
 	// element type returned in array by ListEngines/ListActiveEngines
-	// dbus type: ???
+	// dbus type: (sa{sv}sssssssssus)
 	// see https://github.com/ibus/ibus/commit/8677fac588f4189d59c95e6dbead9fd9c5152871
-	public struct IBusEngineDesc
+	internal struct IBusEngineDesc_v1_4
 	{
 		public string a;
 		public IDictionary<string, object> b;

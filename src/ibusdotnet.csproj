@@ -43,6 +43,7 @@
     <Compile Include="InputBusWrapper.cs" />
     <Compile Include="InputContextWrapper.cs" />
     <Compile Include="IBusConnection.cs" />
+    <Compile Include="IBusEngineDesc.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
