@@ -23,7 +23,7 @@ namespace IBusDotNet
 
 		public override string ToString()
 		{
-			return string.Format("[IBusEngineDesc] '{0}' '{1}' \nname:'{2}' \nlongname:'{3}' \ndescription:'{4}' \nlanguage:'{5}' \nlicense:'{6}' \nauthor:'{7}' \nicon:'{8}' \nlayout:'{9}' ", a, b, name, longname, description, language, license, author, icon,
+			return string.Format("[IBusEngineDesc v1] '{0}' '{1}' \nname:'{2}' \nlongname:'{3}' \ndescription:'{4}' \nlanguage:'{5}' \nlicense:'{6}' \nauthor:'{7}' \nicon:'{8}' \nlayout:'{9}' ", a, b, name, longname, description, language, license, author, icon,
 			layout);
 		}
 	}
@@ -53,7 +53,7 @@ namespace IBusDotNet
 
 		public override string ToString()
 		{
-			return string.Format("[IBusEngineDesc] '{0}' '{1}' \nname:'{2}' \nlongname:'{3}' \ndescription:'{4}' \nlanguage:'{5}' \nlicense:'{6}' \nauthor:'{7}' \nicon:'{8}' \nlayout:'{9}' \nrank:{10}", a, b, name, longname, description, language, license, author, icon,
+			return string.Format("[IBusEngineDesc v2] '{0}' '{1}' \nname:'{2}' \nlongname:'{3}' \ndescription:'{4}' \nlanguage:'{5}' \nlicense:'{6}' \nauthor:'{7}' \nicon:'{8}' \nlayout:'{9}' \nrank:{10}", a, b, name, longname, description, language, license, author, icon,
 			layout, rank);
 		}
 	}
@@ -61,7 +61,7 @@ namespace IBusDotNet
 	// This corresponds to ibus 1.3.7.
 	// element type returned in array by ListEngines/ListActiveEngines
 	// dbus type: (sa{sv}sssssssssu)
-	public struct IBusEngineDesc
+	public struct IBusEngineDesc_v3
 	{
 		public string a;
 		public IDictionary<string, object> b;
@@ -78,14 +78,41 @@ namespace IBusDotNet
 
 		public override string ToString()
 		{
-			return string.Format("[IBusEngineDesc] '{0}' '{1}' \nname:'{2}' \nlongname:'{3}' \ndescription:'{4}' \nlanguage:'{5}' \nlicense:'{6}' \nauthor:'{7}' \nicon:'{8}' \nlayout:'{9}' \nhotkeys:'{10}' \nrank:{11}", a, b, name, longname, description, language, license, author, icon,
+			return string.Format("[IBusEngineDesc 1.3.7] '{0}' '{1}' \nname:'{2}' \nlongname:'{3}' \ndescription:'{4}' \nlanguage:'{5}' \nlicense:'{6}' \nauthor:'{7}' \nicon:'{8}' \nlayout:'{9}' \nhotkeys:'{10}' \nrank:{11}", a, b, name, longname, description, language, license, author, icon,
 			layout, hotkeys ,rank);
+		}
+	}
+
+	// This corresponds to ibus 1.4.
+	// element type returned in array by ListEngines/ListActiveEngines
+	// dbus type: ???
+	// see https://github.com/ibus/ibus/commit/8677fac588f4189d59c95e6dbead9fd9c5152871
+	public struct IBusEngineDesc
+	{
+		public string a;
+		public IDictionary<string, object> b;
+		public string longname;
+		public string name;
+		public string description;
+		public string language;
+		public string license;
+		public string author;
+		public string icon;
+		public string layout;
+		public string hotkeys;
+		public UInt32 rank;
+		public string symbol;
+
+		public override string ToString()
+		{
+			return string.Format("[IBusEngineDesc 1.4] '{0}' '{1}' \nname:'{2}' \nlongname:'{3}' \ndescription:'{4}' \nlanguage:'{5}' \nlicense:'{6}' \nauthor:'{7}' \nicon:'{8}' \nlayout:'{9}' \nhotkeys:'{10}' \nrank:{11}\nsymbol:{12}",
+				a, b, name, longname, description, language, license, author, icon, layout,
+				hotkeys, rank, symbol);
 		}
 	}
 
 	// TODO rename this interface to IBus
 	[Interface("org.freedesktop.IBus")]
-	[CLSCompliant(false)]
 	public interface IIBus : Introspectable
 	{
 		[return: Argument("address")]
@@ -144,7 +171,6 @@ namespace IBusDotNet
 
 	// TODO: add more events for the rest of the signals
 	[Interface("org.freedesktop.IBus.InputContext")]
-	[CLSCompliant(false)]
 	public interface InputContext : Introspectable
 	{
 		[return: Argument("handled")]
@@ -197,7 +223,6 @@ namespace IBusDotNet
 	}
 
 	[Interface("org.freedesktop.IBus.Panel")]
-	[CLSCompliant(false)]
 	public interface Panel : Introspectable
 	{
 		void UpdateLookupTable(object lookup_table, bool visible);
@@ -227,7 +252,6 @@ namespace IBusDotNet
 	}
 
 	// dbus type: (sa{sv}sv)
-	[CLSCompliant(false)]
 	public struct IBusText
 	{
 		public string TypeName;
@@ -237,7 +261,6 @@ namespace IBusDotNet
 	}
 
 	// dbus type: (sa{sv}av)
-	[CLSCompliant(false)]
 	public struct IBusAttrList
 	{
 		public string TypeName;
