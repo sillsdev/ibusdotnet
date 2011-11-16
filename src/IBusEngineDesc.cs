@@ -21,6 +21,7 @@ namespace IBusDotNet
 			// commit e2793f52bf3da7a22321 changed IBusEngineDesc to contain rank field.
 			Version2,
 			Version_1_3_7,
+			Version_1_3_9,
 			Version_1_4,
 		}
 
@@ -107,14 +108,31 @@ namespace IBusDotNet
 							Hotkeys = engineDesc.Value.hotkeys };
 					}
 					// try next version.
-					s_ibusVersion = IBusVersions.Version_1_4;
+					s_ibusVersion = IBusVersions.Version_1_3_9;
 					break;
 				}
+
+				case IBusVersions.Version_1_3_9:
+					{
+						var engineDesc = ConvertToEngineDesc<IBusEngineDesc_v4>(engine);
+						if (engineDesc.HasValue)
+						{
+							return new IBusEngineDesc { LongName = engineDesc.Value.longname,
+							Name = engineDesc.Value.name, Description = engineDesc.Value.description,
+							Language = engineDesc.Value.language, License = engineDesc.Value.license,
+							Author = engineDesc.Value.author, Icon = engineDesc.Value.icon,
+							Layout = engineDesc.Value.layout, Rank = engineDesc.Value.rank,
+							Hotkeys = engineDesc.Value.hotkeys };
+						}
+						// try next version.
+						s_ibusVersion = IBusVersions.Version_1_4;
+						break;
+					}
 
 				default:
 				case IBusVersions.Version_1_4:
 				{
-					var engineDesc = ConvertToEngineDesc<IBusEngineDesc_v1_4>(engine);
+					var engineDesc = ConvertToEngineDesc<IBusEngineDesc_v5>(engine);
 					if (engineDesc.HasValue)
 					{
 						return new IBusEngineDesc { LongName = engineDesc.Value.longname,

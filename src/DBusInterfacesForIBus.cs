@@ -83,11 +83,38 @@ namespace IBusDotNet
 		}
 	}
 
+	// This corresponds to ibus 1.3.99
+	// element type returned in array by ListEngines/ListActiveEngines
+	// dbus type: (sa{sv}ssssssssus)
+	// see https://github.com/ibus/ibus/commit/8677fac588f4189d59c95e6dbead9fd9c5152871
+	internal struct IBusEngineDesc_v4
+	{
+		public string a;
+		public IDictionary<string, object> b;
+		public string longname;
+		public string name;
+		public string description;
+		public string language;
+		public string license;
+		public string author;
+		public string icon;
+		public string layout;
+		public UInt32 rank;
+		public string hotkeys;
+
+		public override string ToString()
+		{
+			return string.Format("[IBusEngineDesc 1.3.99] '{0}' '{1}' \nname:'{2}' \nlongname:'{3}' \ndescription:'{4}' \nlanguage:'{5}' \nlicense:'{6}' \nauthor:'{7}' \nicon:'{8}' \nlayout:'{9}' \nhotkeys:'{10}' \nrank:{11}",
+				a, b, name, longname, description, language, license, author, icon, layout,
+				hotkeys, rank);
+		}
+	}
+
 	// This corresponds to ibus 1.4.
 	// element type returned in array by ListEngines/ListActiveEngines
 	// dbus type: (sa{sv}sssssssssus)
 	// see https://github.com/ibus/ibus/commit/8677fac588f4189d59c95e6dbead9fd9c5152871
-	internal struct IBusEngineDesc_v1_4
+	internal struct IBusEngineDesc_v5
 	{
 		public string a;
 		public IDictionary<string, object> b;
