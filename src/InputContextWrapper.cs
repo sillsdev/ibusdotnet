@@ -1,3 +1,4 @@
+using System;
 using NDesk.DBus;
 
 namespace IBusDotNet
@@ -13,6 +14,9 @@ namespace IBusDotNet
 		/// </summary>
 		public InputContextWrapper(IBusConnection connection, string inputContextName)
 		{
+			if (connection == null)
+				throw new ArgumentNullException("connection");
+
 			_inputContext = ((NDesk.DBus.Connection)connection).GetObject<InputContext>("org.freedesktop.DBus", new ObjectPath(inputContextName));
 		}
 

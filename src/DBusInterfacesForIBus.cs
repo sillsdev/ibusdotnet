@@ -112,7 +112,7 @@ namespace IBusDotNet
 
 	// This corresponds to ibus 1.4.
 	// element type returned in array by ListEngines/ListActiveEngines
-	// dbus type: (sa{sv}sssssssssus)
+	// dbus type: (sa{sv}ssssssssuss)
 	// see https://github.com/ibus/ibus/commit/8677fac588f4189d59c95e6dbead9fd9c5152871
 	internal struct IBusEngineDesc_v5
 	{
@@ -126,8 +126,8 @@ namespace IBusDotNet
 		public string author;
 		public string icon;
 		public string layout;
-		public string hotkeys;
 		public UInt32 rank;
+		public string hotkeys;
 		public string symbol;
 
 		public override string ToString()

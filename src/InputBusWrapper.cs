@@ -1,3 +1,4 @@
+using System;
 using NDesk.DBus;
 
 namespace IBusDotNet
@@ -8,6 +9,9 @@ namespace IBusDotNet
 
 		public InputBusWrapper(IBusConnection connection)
 		{
+			if (connection == null)
+				throw new ArgumentNullException("connection");
+
 			_inputBus = ((NDesk.DBus.Connection)connection).GetObject<IIBus>("org.freedesktop.IBus", new ObjectPath("/org/freedesktop/IBus"));
 		}
 
