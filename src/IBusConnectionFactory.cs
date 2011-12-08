@@ -29,6 +29,37 @@ namespace IBusDotNet
 		}
 
 		/// <summary>
+		/// Gets the display number and the hostname (if any) from the DISPLAY environment
+		/// variable.
+		/// </summary>
+		internal static int GetDisplayNumber(out string hostname)
+		{
+			// default to 0 if we can't find from DISPLAY ENV var
+			int displayNumber = 0;
+			hostname = null;
+			string display = System.Environment.GetEnvironmentVariable("DISPLAY");
+			if (!string.IsNullOrEmpty(display))
+			{
+				// DISPLAY is hostname:displaynumber.screennumber
+				// or more nomally ':0.0"
+				// so look for first number after :
+				int start = display.IndexOf(':');
+				int end = display.IndexOf('.', start >= 0 ? start : 0);
+				if (end < 0)
+					end = display.Length;
+				if (start >= 0)
+				{
+					int.TryParse(display.Substring(start + 1, end - start - 1), out displayNumber);
+					hostname = display.Substring(0, start);
+				}
+			}
+			if (string.IsNullOrEmpty(hostname))
+				hostname = "unix";
+
+			return displayNumber;
+		}
+
+		/// <summary>
 		/// Attempts to return the file name of the ibus server config file that contains the socket name.
 		/// </summary>
 		static string IBusConfigFilename()
@@ -53,25 +84,8 @@ namespace IBusDotNet
 			directory = Path.Combine(directory, "ibus");
 			directory = Path.Combine(directory, "bus");
 
-			// default to 0 if we can't find from DISPLAY ENV var
-			int displayNumber = 0;
-
-			string hostname = null;
-			string display = System.Environment.GetEnvironmentVariable("DISPLAY");
-			if (display != String.Empty)
-			{
-				// DISPLAY is hostname:displaynumber.screennumber
-				// or more nomally ':0.0"
-				// so look for first number after :
-				int start = display.IndexOf(':');
-				int end = display.IndexOf('.');
-				if (start > 0 && end > 0)
-					int.TryParse(display.Substring(start, end - start), out displayNumber);
-				hostname = display.Substring(0, start);
-			}
-
-			if (string.IsNullOrEmpty(hostname))
-				hostname = "unix";
+			string hostname;
+			int displayNumber = GetDisplayNumber(out hostname);
 
 			string fileName = Path.Combine(directory,
 				string.Format("{0}-{1}-{2}", LocalMachineId, hostname, displayNumber));
