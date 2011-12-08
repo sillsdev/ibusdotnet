@@ -13,6 +13,22 @@ namespace IBusDotNet
 		const string IBUS_ADDRESS = "IBUS_ADDRESS";
 
 		/// <summary>
+		/// Gets the local machine identifier.
+		/// </summary>
+		/// <remarks>The path to the machine-id file is hardcoded in ibus sources as
+		/// /var/lib/dbus/machine-id (src/ibusshare.c).</remarks>
+		private static string LocalMachineId
+		{
+			get
+			{
+				using (var machineIdFile = new StreamReader("/var/lib/dbus/machine-id"))
+				{
+					return machineIdFile.ReadToEnd().TrimEnd('\n');
+				}
+			}
+		}
+
+		/// <summary>
 		/// Attempts to return the file name of the ibus server config file that contains the socket name.
 		/// </summary>
 		static string IBusConfigFilename()
@@ -22,9 +38,11 @@ namespace IBusDotNet
 			// Actual file is called 'localmachineid'-'hostname'-'displaynumber'
 			// eg: 5a2f89ae5421972c24f8a4414b0495d7-unix-0
 			// could check $DISPLAY to see if we are running not on display 0 or not.
+			// localmachineid comes from /var/lib/dbus/machine-id
 
 			string directory = System.Environment.GetEnvironmentVariable("XDG_CONFIG_HOME");
-			if (String.IsNullOrEmpty(directory)) {
+			if (String.IsNullOrEmpty(directory))
+			{
 				directory = System.Environment.GetEnvironmentVariable("HOME");
 
 				if (String.IsNullOrEmpty(directory))
@@ -35,31 +53,36 @@ namespace IBusDotNet
 			directory = Path.Combine(directory, "ibus");
 			directory = Path.Combine(directory, "bus");
 
-			DirectoryInfo di = new DirectoryInfo(directory);
-
 			// default to 0 if we can't find from DISPLAY ENV var
 			int displayNumber = 0;
 
-			// DISPLAY is hostname:displaynumber.screennumber
-			// or more nomally ':0.0"
-			// so look for first number after :
-
+			string hostname = null;
 			string display = System.Environment.GetEnvironmentVariable("DISPLAY");
-			if (display != String.Empty) {
+			if (display != String.Empty)
+			{
+				// DISPLAY is hostname:displaynumber.screennumber
+				// or more nomally ':0.0"
+				// so look for first number after :
 				int start = display.IndexOf(':');
 				int end = display.IndexOf('.');
 				if (start > 0 && end > 0)
 					int.TryParse(display.Substring(start, end - start), out displayNumber);
+				hostname = display.Substring(0, start);
 			}
 
-			string filter = String.Format("*-{0}", displayNumber);
-			FileInfo[] files = di.GetFiles(filter);
+			if (string.IsNullOrEmpty(hostname))
+				hostname = "unix";
 
-			if (files.Length != 1)
-				throw new ApplicationException(String.Format("Unable to locate IBus Config file in directory {0} with filter {1}. DISPLAY = {2}: {3}", directory, filter, display, files.Length < 1 ? "Unable to locate file" : "Too many files"));
+			string fileName = Path.Combine(directory,
+				string.Format("{0}-{1}-{2}", LocalMachineId, hostname, displayNumber));
 
-			return files[0].FullName;
+			if (!File.Exists(fileName))
+			{
+				throw new ApplicationException(string.Format("Unable to locate IBus Config file {0}",
+					fileName));
+			}
 
+			return fileName;
 		}
 
 		/// <summary>
@@ -71,20 +94,23 @@ namespace IBusDotNet
 			// Set Enviroment 'DBUS_SESSION_BUS_ADDRESS' so DBus Library actually connects to IBus' DBus.
 			// IBUS_ADDRESS=unix:abstract=/tmp/dbus-DVpIKyfU9k,guid=f44265fa3b2781284d54c56a4b0d83f3
 
-			StreamReader s = new StreamReader(filename);
-			string line = String.Empty;
-			while (line != null) {
-				line = s.ReadLine();
+			using (StreamReader s = new StreamReader(filename))
+			{
+				string line = String.Empty;
+				while (line != null)
+				{
+					line = s.ReadLine();
 
-				if (line.Contains(IBUS_ADDRESS)) {
-					string[] toks = line.Split("=".ToCharArray(), 2);
-					if (toks.Length != 2 || toks[1] == String.Empty)
-						throw new ApplicationException(String.Format("IBUS config file : {0} not as expected for line {1}. Expected IBUS_ADDRESS='some socket'", filename, line));
+					if (line.Contains(IBUS_ADDRESS))
+					{
+						string[] toks = line.Split("=".ToCharArray(), 2);
+						if (toks.Length != 2 || toks[1] == String.Empty)
+							throw new ApplicationException(String.Format("IBUS config file : {0} not as expected for line {1}. Expected IBUS_ADDRESS='some socket'", filename, line));
 
-					return toks[1];
+						return toks[1];
+					}
 				}
 			}
-
 			throw new ApplicationException(String.Format("IBUS config file : {0} doesn't contain {1} token", filename, IBUS_ADDRESS));
 		}
 
