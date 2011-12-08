@@ -21,7 +21,7 @@ namespace IBusDotNet
 			// commit e2793f52bf3da7a22321 changed IBusEngineDesc to contain rank field.
 			Version2,
 			Version_1_3_7,
-			Version_1_3_9,
+			Version_1_3_99,
 			Version_1_4,
 		}
 
@@ -69,10 +69,10 @@ namespace IBusDotNet
 					if (engineDesc.HasValue)
 					{
 						return new IBusEngineDesc { LongName = engineDesc.Value.longname,
-						Name = engineDesc.Value.name, Description = engineDesc.Value.description,
-						Language = engineDesc.Value.language, License = engineDesc.Value.license,
-						Author = engineDesc.Value.author, Icon = engineDesc.Value.icon,
-						Layout = engineDesc.Value.layout };
+							Name = engineDesc.Value.name, Description = engineDesc.Value.description,
+							Language = engineDesc.Value.language, License = engineDesc.Value.license,
+							Author = engineDesc.Value.author, Icon = engineDesc.Value.icon,
+							Layout = engineDesc.Value.layout };
 					}
 					// try next version.
 					s_ibusVersion = IBusVersions.Version2;
@@ -85,10 +85,10 @@ namespace IBusDotNet
 					if (engineDesc.HasValue)
 					{
 						return new IBusEngineDesc { LongName = engineDesc.Value.longname,
-						Name = engineDesc.Value.name, Description = engineDesc.Value.description,
-						Language = engineDesc.Value.language, License = engineDesc.Value.license,
-						Author = engineDesc.Value.author, Icon = engineDesc.Value.icon,
-						Layout = engineDesc.Value.layout, Rank = engineDesc.Value.rank };
+							Name = engineDesc.Value.name, Description = engineDesc.Value.description,
+							Language = engineDesc.Value.language, License = engineDesc.Value.license,
+							Author = engineDesc.Value.author, Icon = engineDesc.Value.icon,
+							Layout = engineDesc.Value.layout, Rank = engineDesc.Value.rank };
 					}
 					// try next version.
 					s_ibusVersion = IBusVersions.Version_1_3_7;
@@ -108,21 +108,21 @@ namespace IBusDotNet
 							Hotkeys = engineDesc.Value.hotkeys };
 					}
 					// try next version.
-					s_ibusVersion = IBusVersions.Version_1_3_9;
+					s_ibusVersion = IBusVersions.Version_1_3_99;
 					break;
 				}
 
-				case IBusVersions.Version_1_3_9:
+				case IBusVersions.Version_1_3_99:
 					{
 						var engineDesc = ConvertToEngineDesc<IBusEngineDesc_v4>(engine);
 						if (engineDesc.HasValue)
 						{
 							return new IBusEngineDesc { LongName = engineDesc.Value.longname,
-							Name = engineDesc.Value.name, Description = engineDesc.Value.description,
-							Language = engineDesc.Value.language, License = engineDesc.Value.license,
-							Author = engineDesc.Value.author, Icon = engineDesc.Value.icon,
-							Layout = engineDesc.Value.layout, Rank = engineDesc.Value.rank,
-							Hotkeys = engineDesc.Value.hotkeys };
+								Name = engineDesc.Value.name, Description = engineDesc.Value.description,
+								Language = engineDesc.Value.language, License = engineDesc.Value.license,
+								Author = engineDesc.Value.author, Icon = engineDesc.Value.icon,
+								Layout = engineDesc.Value.layout, Rank = engineDesc.Value.rank,
+								Hotkeys = engineDesc.Value.hotkeys };
 						}
 						// try next version.
 						s_ibusVersion = IBusVersions.Version_1_4;
