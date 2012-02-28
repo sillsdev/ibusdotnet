@@ -138,6 +138,34 @@ namespace IBusDotNet
 		}
 	}
 
+	// This corresponds to ibus 1.4.
+	// element type returned in array by ListEngines/ListActiveEngines
+	// dbus type: (sa{sv}ssssssssusss)
+	internal struct IBusEngineDesc_v6
+	{
+		public string a;
+		public IDictionary<string, object> b;
+		public string longname;
+		public string name;
+		public string description;
+		public string language;
+		public string license;
+		public string author;
+		public string icon;
+		public string layout;
+		public UInt32 rank;
+		public string hotkeys;
+		public string symbol;
+		public string setup;
+
+		public override string ToString()
+		{
+			return string.Format("[IBusEngineDesc 1.4.1] '{0}' '{1}' \nname:'{2}' \nlongname:'{3}' \ndescription:'{4}' \nlanguage:'{5}' \nlicense:'{6}' \nauthor:'{7}' \nicon:'{8}' \nlayout:'{9}' \nhotkeys:'{10}' \nrank:{11}\nsymbol:'{12}' \nsetup:'{13}'",
+				a, b, name, longname, description, language, license, author, icon, layout,
+				hotkeys, rank, symbol, setup);
+		}
+	}
+
 	// TODO rename this interface to IBus
 	[Interface("org.freedesktop.IBus")]
 	public interface IIBus : Introspectable

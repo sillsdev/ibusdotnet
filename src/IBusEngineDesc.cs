@@ -23,6 +23,7 @@ namespace IBusDotNet
 			Version_1_3_7,
 			Version_1_3_99,
 			Version_1_4,
+			Version_1_4_1,
 		}
 
 		private static IBusVersions s_ibusVersion = IBusVersions.Unknown;
@@ -42,6 +43,7 @@ namespace IBusDotNet
 		public string Hotkeys { get; private set; }
 		public UInt32 Rank { get; private set; }
 		public string Symbol { get; private set; }
+		public string Setup { get; private set; }
 
 		private static T? ConvertToEngineDesc<T>(object engine)
 		{
@@ -129,7 +131,6 @@ namespace IBusDotNet
 						break;
 					}
 
-				default:
 				case IBusVersions.Version_1_4:
 				{
 					var engineDesc = ConvertToEngineDesc<IBusEngineDesc_v5>(engine);
@@ -141,6 +142,25 @@ namespace IBusDotNet
 							Author = engineDesc.Value.author, Icon = engineDesc.Value.icon,
 							Layout = engineDesc.Value.layout, Rank = engineDesc.Value.rank,
 							Hotkeys = engineDesc.Value.hotkeys, Symbol = engineDesc.Value.symbol };
+					}
+					// try next version.
+					s_ibusVersion = IBusVersions.Version_1_4_1;
+					break;
+				}
+
+				default:
+				case IBusVersions.Version_1_4_1:
+				{
+					var engineDesc = ConvertToEngineDesc<IBusEngineDesc_v6>(engine);
+					if (engineDesc.HasValue)
+					{
+						return new IBusEngineDesc { LongName = engineDesc.Value.longname,
+							Name = engineDesc.Value.name, Description = engineDesc.Value.description,
+							Language = engineDesc.Value.language, License = engineDesc.Value.license,
+							Author = engineDesc.Value.author, Icon = engineDesc.Value.icon,
+							Layout = engineDesc.Value.layout, Rank = engineDesc.Value.rank,
+							Hotkeys = engineDesc.Value.hotkeys, Symbol = engineDesc.Value.symbol,
+							Setup = engineDesc.Value.setup };
 					}
 
 					Console.WriteLine("*** Unknown ibus version");
