@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using NDesk.DBus;
+using System.Diagnostics;
 
 namespace IBusDotNet
 {
@@ -92,8 +93,8 @@ namespace IBusDotNet
 
 			if (!File.Exists(fileName))
 			{
-				throw new ApplicationException(string.Format("Unable to locate IBus Config file {0}",
-					fileName));
+				Debug.Print("Unable to locate IBus Config file {0}", fileName);
+				return null;
 			}
 
 			return fileName;
@@ -147,6 +148,9 @@ namespace IBusDotNet
 				string socketName = System.Environment.GetEnvironmentVariable(ENV_IBUS_ADDRESS);
 				if (String.IsNullOrEmpty(socketName))
 					socketName = GetSocket(IBusConfigFilename());
+
+				if (String.IsNullOrEmpty(socketName))
+					return null;
 
 				// Equivalent to having $DBUS_SESSION_BUS_ADDRESS set
 				singleConnection = new IBusConnection(Bus.Open(socketName));
