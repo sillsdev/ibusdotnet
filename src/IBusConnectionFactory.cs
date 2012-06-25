@@ -147,7 +147,13 @@ namespace IBusDotNet
 				// if Enviroment var IBUS_ADDRESS doesn't exist then attempt to read it from IBus server settings file.
 				string socketName = System.Environment.GetEnvironmentVariable(ENV_IBUS_ADDRESS);
 				if (String.IsNullOrEmpty(socketName))
-					socketName = GetSocket(IBusConfigFilename());
+				{
+					string configFileName = IBusConfigFilename();
+					if (!File.Exists(configFileName))
+						return null;
+
+					socketName = GetSocket(configFileName);
+				}
 
 				if (String.IsNullOrEmpty(socketName))
 					return null;
