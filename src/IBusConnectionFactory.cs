@@ -162,7 +162,12 @@ namespace IBusDotNet
 				singleConnection = new IBusConnection(Bus.Open(socketName));
 				singleConnection.Disposed += HandleSingleConnectionDisposed;
 			}
-			catch(System.Exception) { } // ignore - ibus may not be running.
+			catch (Exception e)
+			{
+#if DEBUG
+				Console.WriteLine("Got {0} exception trying to create IBusConnection: {1}", e.GetType(), e.Message);
+#endif
+			} // ignore - ibus may not be running.
 
 			return singleConnection;
 		}
