@@ -14,6 +14,20 @@ namespace IBusDotNet
 	[TestFixture]
 	public class IBusConnectionFactoryTests
 	{
+		private string m_OriginalDisplay;
+
+		[TestFixtureSetUp]
+		public void FixtureSetup()
+		{
+			m_OriginalDisplay = Environment.GetEnvironmentVariable("DISPLAY");
+		}
+
+		[TestFixtureTearDown]
+		public void FixtureTearDown()
+		{
+			Environment.SetEnvironmentVariable("DISPLAY", m_OriginalDisplay);
+		}
+
 		[Test]
 		public void GetDisplayNumber_NoEnv()
 		{
