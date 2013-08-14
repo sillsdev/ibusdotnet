@@ -41,7 +41,7 @@ namespace IBusDotNet
 			}
 
 			var ibusWrapper = new IBusDotNet.InputBusWrapper(Connection);
-			object[] engines = ibusWrapper.InputBus.ListActiveEngines();
+			object[] engines = ibusWrapper.InputBus.ListEngines();
 			if (engines.Length == 0)
 			{
 				Assert.Ignore("Can't run this test without any ibus keyboards installed.");
