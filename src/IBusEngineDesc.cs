@@ -15,8 +15,28 @@ using NDesk.DBus;
 
 namespace IBusDotNet
 {
+	public interface IBusEngineDesc
+	{
+		string Name { get; }
+		string LongName { get; }
+		string Description { get; }
+		string Language { get; }
+		string License { get; }
+		string Author { get; }
+		string Icon { get; }
+		string Layout { get; }
+		string Hotkeys { get; }
+		UInt32 Rank { get; }
+		string Symbol { get; }
+		string Setup { get; }
+		string LayoutVariant { get; }
+		string LayoutOption { get; }
+		string Version { get; }
+		string TextDomain { get; }
+	}
+
 	/// <summary>
-	/// Dynamically constructed IBusEngineDesc struct based on the dbus signature
+	/// Dynamically constructed BusEngineDesc struct based on the dbus signature
 	/// </summary>
 	/// <remarks>Limitations: we follow the YAGNI approach and support currently only the basic
 	/// types. Also we assume that the order of properties of the same type stays the same (i.e.
@@ -25,12 +45,12 @@ namespace IBusDotNet
 	/// but that looked way more complicated and isn't currently needed. Besides, the ibus
 	/// code has a comment that the order of the serialized properties should not be changed
 	/// (https://github.com/ibus/ibus/blob/master/src/ibusenginedesc.c).</remarks>
-	public class IBusEngineDesc
+	public class BusEngineDesc: IBusEngineDesc
 	{
 		private Type m_type;
 		private object m_engine;
 
-		private IBusEngineDesc(Type type, object engine)
+		internal BusEngineDesc(Type type, object engine)
 		{
 			m_type = type;
 			m_engine = Convert.ChangeType(engine, type);
@@ -218,11 +238,14 @@ namespace IBusDotNet
 		public string LayoutOption { get { return GetProperty<string>("layoutOption"); } }
 		public string Version { get { return GetProperty<string>("version"); } }
 		public string TextDomain { get { return GetProperty<string>("textDomain"); } }
+	}
 
+	public static class IBusEngineDescFactory
+	{
 		/// <summary>Get IBusEngineDesc names in a way tolerant to IBusEngineDesc versions.</summary>
 		public static IBusEngineDesc GetEngineDesc(object engine)
 		{
-			return new IBusEngineDesc(CreateEngineDesc(engine.ToString()), engine);
+			return new BusEngineDesc(BusEngineDesc.CreateEngineDesc(engine.ToString()), engine);
 		}
 	}
 }
