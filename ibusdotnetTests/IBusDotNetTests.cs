@@ -48,7 +48,7 @@ namespace IBusDotNet
 				return;
 			}
 
-			Assert.IsNotNull(IBusEngineDesc.GetEngineDesc(engines[0]));
+			Assert.IsNotNull(IBusEngineDescFactory.GetEngineDesc(engines[0]));
 		}
 	}
 }
