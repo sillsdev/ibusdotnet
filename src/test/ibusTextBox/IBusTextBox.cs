@@ -47,8 +47,6 @@ namespace Test
 				// Console.WriteLine(inputContext.Introspect());
 
 				inputContext.SetCapabilities(Capabilities.PreeditText |
-											 Capabilities.AuxText |
-											 Capabilities.LookupTable |
 											 Capabilities.Focus);
 
 				// Engine can be programatically selected by:
@@ -152,17 +150,17 @@ namespace Test
 
 			if (visible) {
 				preeditTextBox.Show();
-				// convert variant type to a IBusText object
-				IBusText t = (IBusText)Convert.ChangeType(text, typeof(IBusText));
+				IBusText t = IBusText.FromObject(text);
 				preeditTextBox.Text = t.Text;
 			}
 		}
 
 		void CommitTextEventHandler(object text)
 		{
-			IBusText t = (IBusText)Convert.ChangeType(text, typeof(IBusText));
+			IBusText t = IBusText.FromObject(text);
 
-			foreach (char c in t.Text) {
+			foreach (char c in t.Text)
+			{
 				Message m = new Message();
 				m.Msg = 258;
 				m.WParam = new IntPtr(c);

@@ -150,20 +150,340 @@ namespace IBusDotNet
 		void ShowLanguageBar();
 	}
 
-	// dbus type: (sa{sv}sv)
-	public struct IBusText
+	public class IBusText: IConvertible
 	{
-		public string TypeName;
-		public IDictionary<string, object> b;
-		public string Text;
-		public object AttrList; // IBusAttrList
+		// dbus type: (sa{sv}sv)
+		protected internal struct DBusIBusText
+		{
+			public string TypeName;
+			public IDictionary<string, object> b;
+			public string Text;
+			public object AttrList; // IBusAttrList
+		}
+
+		// dbus type: (sa{sv}av)
+		protected internal struct DBusIBusAttrList
+		{
+			public string TypeName;
+			public IDictionary<string, object> b;
+			public object[] attributes;
+		}
+
+		private DBusIBusText TextObj;
+
+		public IBusText(string text): this(text, new IBusAttribute[] {})
+		{
+		}
+
+		public IBusText(string text, IBusAttribute[] attributes)
+		{
+			TextObj = new DBusIBusText
+			{
+				Text = text,
+				AttrList = new DBusIBusAttrList { attributes = attributes }
+			};
+		}
+
+		private IBusText(DBusIBusText textObj)
+		{
+			TextObj = textObj;
+		}
+
+		public static IBusText FromObject(object obj)
+		{
+			return new IBusText((DBusIBusText)Convert.ChangeType(obj, typeof(DBusIBusText)));
+		}
+
+		#region IConvertible implementation
+
+		public TypeCode GetTypeCode()
+		{
+			return TypeCode.Object;
+		}
+
+		public bool ToBoolean(IFormatProvider provider)
+		{
+			return Convert.ToBoolean(this, provider);
+		}
+
+		public byte ToByte(IFormatProvider provider)
+		{
+			return Convert.ToByte(this, provider);
+		}
+
+		public char ToChar(IFormatProvider provider)
+		{
+			return Convert.ToChar(this, provider);
+		}
+
+		public DateTime ToDateTime(IFormatProvider provider)
+		{
+			throw new NotImplementedException();
+		}
+
+		public decimal ToDecimal(IFormatProvider provider)
+		{
+			return Convert.ToDecimal(this, provider);
+		}
+
+		public double ToDouble(IFormatProvider provider)
+		{
+			return Convert.ToDouble(this, provider);
+		}
+
+		public short ToInt16(IFormatProvider provider)
+		{
+			return Convert.ToInt16(this, provider);
+		}
+
+		public int ToInt32(IFormatProvider provider)
+		{
+			return Convert.ToInt32(this, provider);
+		}
+
+		public long ToInt64(IFormatProvider provider)
+		{
+			return Convert.ToInt64(this, provider);
+		}
+
+		public sbyte ToSByte(IFormatProvider provider)
+		{
+			return Convert.ToSByte(this, provider);
+		}
+
+		public float ToSingle(IFormatProvider provider)
+		{
+			return Convert.ToSingle(this, provider);
+		}
+
+		public string ToString(IFormatProvider provider)
+		{
+			return Convert.ToString(this, provider);
+		}
+
+		public object ToType(Type conversionType, IFormatProvider provider)
+		{
+			if (conversionType == typeof(DBusIBusText))
+				return TextObj;
+			return Convert.ChangeType(TextObj, conversionType, provider);
+		}
+
+		public ushort ToUInt16(IFormatProvider provider)
+		{
+			return Convert.ToUInt16(this, provider);
+		}
+
+		public uint ToUInt32(IFormatProvider provider)
+		{
+			return Convert.ToUInt32(this, provider);
+		}
+
+		public ulong ToUInt64(IFormatProvider provider)
+		{
+			return Convert.ToUInt32(this, provider);
+		}
+		#endregion
+
+		public string Text { get { return TextObj.Text; }}
+
+		public IEnumerable<IBusAttribute> Attributes
+		{
+			get
+			{
+				var attrList = (DBusIBusAttrList)Convert.ChangeType(TextObj.AttrList, typeof(DBusIBusAttrList));
+				foreach (object obj in attrList.attributes)
+				{
+					yield return IBusAttribute.FromObject(obj);
+				}
+			}
+		}
 	}
 
-	// dbus type: (sa{sv}av)
-	public struct IBusAttrList
+	internal enum IBusAttrType
 	{
-		public string TypeName;
-		public IDictionary<string, object> b;
-		public object[] c;
+		Underline = 1,
+		Foreground = 2,
+		Background = 3
+	}
+
+	public class IBusAttribute: IConvertible
+	{
+		// dbus type: (sa{sv}uuuu)
+		protected internal struct DBusIBusAttribute
+		{
+			public string TypeName;
+			public IDictionary<string, object> b;
+			public uint type;
+			public uint value;
+			public uint start_index;
+			public uint end_index;
+		}
+
+		protected DBusIBusAttribute Attribute;
+
+		internal IBusAttribute()
+		{
+		}
+
+		internal IBusAttribute(DBusIBusAttribute attr)
+		{
+			Attribute = attr;
+		}
+
+		internal static IBusAttribute FromObject(object obj)
+		{
+			var attr = (DBusIBusAttribute)Convert.ChangeType(obj, typeof(DBusIBusAttribute));
+			switch ((IBusAttrType)attr.type)
+			{
+				case IBusAttrType.Underline:
+					return new IBusUnderlineAttribute(attr);
+				default:
+					return new IBusColorAttribute(attr);
+			}
+		}
+
+		#region IConvertible implementation
+
+		public TypeCode GetTypeCode()
+		{
+			return TypeCode.Object;
+		}
+
+		public bool ToBoolean(IFormatProvider provider)
+		{
+			return Convert.ToBoolean(this, provider);
+		}
+
+		public byte ToByte(IFormatProvider provider)
+		{
+			return Convert.ToByte(this, provider);
+		}
+
+		public char ToChar(IFormatProvider provider)
+		{
+			return Convert.ToChar(this, provider);
+		}
+
+		public DateTime ToDateTime(IFormatProvider provider)
+		{
+			throw new NotImplementedException();
+		}
+
+		public decimal ToDecimal(IFormatProvider provider)
+		{
+			return Convert.ToDecimal(this, provider);
+		}
+
+		public double ToDouble(IFormatProvider provider)
+		{
+			return Convert.ToDouble(this, provider);
+		}
+
+		public short ToInt16(IFormatProvider provider)
+		{
+			return Convert.ToInt16(this, provider);
+		}
+
+		public int ToInt32(IFormatProvider provider)
+		{
+			return Convert.ToInt32(this, provider);
+		}
+
+		public long ToInt64(IFormatProvider provider)
+		{
+			return Convert.ToInt64(this, provider);
+		}
+
+		public sbyte ToSByte(IFormatProvider provider)
+		{
+			return Convert.ToSByte(this, provider);
+		}
+
+		public float ToSingle(IFormatProvider provider)
+		{
+			return Convert.ToSingle(this, provider);
+		}
+
+		public string ToString(IFormatProvider provider)
+		{
+			return Convert.ToString(this, provider);
+		}
+
+		public object ToType(Type conversionType, IFormatProvider provider)
+		{
+			if (conversionType == typeof(DBusIBusAttribute))
+				return Attribute;
+			return Convert.ChangeType(Attribute, conversionType, provider);
+		}
+
+		public ushort ToUInt16(IFormatProvider provider)
+		{
+			return Convert.ToUInt16(this, provider);
+		}
+
+		public uint ToUInt32(IFormatProvider provider)
+		{
+			return Convert.ToUInt32(this, provider);
+		}
+
+		public ulong ToUInt64(IFormatProvider provider)
+		{
+			return Convert.ToUInt32(this, provider);
+		}
+
+		#endregion
+
+		public int StartIndex { get { return (int)Attribute.start_index; }}
+		public int EndIndex { get { return (int)Attribute.end_index; }}
+	}
+
+	// See http://ibus.googlecode.com/svn/docs/ibus-1.5/IBusAttribute.html
+	public enum IBusAttrUnderline
+	{
+		None = 0,
+		Single = 1,
+		Double = 2,
+		Low = 3,
+		Error = 4
+	}
+
+	public class IBusUnderlineAttribute: IBusAttribute
+	{
+		public IBusUnderlineAttribute(IBusAttrUnderline underline, int startIndex, int endIndex)
+		{
+			Attribute = new DBusIBusAttribute
+			{
+				start_index = (uint)startIndex,
+				end_index = (uint)endIndex,
+				value = (uint)underline,
+				type = (uint)IBusAttrType.Underline
+			};
+		}
+
+		internal IBusUnderlineAttribute(DBusIBusAttribute attr): base(attr)
+		{
+		}
+
+		public IBusAttrUnderline Underline { get { return (IBusAttrUnderline)Attribute.value; }}
+	}
+
+	public class IBusColorAttribute: IBusAttribute
+	{
+		public IBusColorAttribute(int color, bool isBackground, int startIndex, int endIndex)
+		{
+			Attribute = new DBusIBusAttribute
+			{
+				start_index = (uint)startIndex,
+				end_index = (uint)endIndex,
+				value = (uint)color,
+				type = (uint)(isBackground ? IBusAttrType.Background : IBusAttrType.Foreground)
+			};
+		}
+
+		internal IBusColorAttribute(DBusIBusAttribute attr): base(attr)
+		{
+		}
+
+		public int Color { get { return (int)Attribute.value; }}
 	}
 }
