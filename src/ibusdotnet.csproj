@@ -39,11 +39,12 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="DBusInterfacesForIBus.cs" />
     <Compile Include="IBusConnectionFactory.cs" />
-    <Compile Include="InputBusWrapper.cs" />
-    <Compile Include="InputContextWrapper.cs" />
     <Compile Include="IBusConnection.cs" />
     <Compile Include="IBusEngineDesc.cs" />
     <Compile Include="PanelWrapper.cs" />
+    <Compile Include="InputContext.cs" />
+    <Compile Include="InputBus.cs" />
+    <Compile Include="IInputContext.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

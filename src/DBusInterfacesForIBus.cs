@@ -5,15 +5,14 @@ using org.freedesktop.DBus;
 
 namespace IBusDotNet
 {
-	// TODO rename this interface to IBus
 	[Interface("org.freedesktop.IBus")]
-	public interface IIBus : Introspectable
+	internal interface IBusBus : Introspectable
 	{
 		[return: Argument("address")]
 		string GetAddress();
 
 		[return: Argument("context")]
-		InputContext CreateInputContext(string name);
+		IBusInputContext CreateInputContext(string name);
 
 		[return: Argument("name")]
 		string CurrentInputContext();
@@ -34,14 +33,13 @@ namespace IBusDotNet
 
 	public class Capabilities
 	{
-		public const uint PreeditText = 1;
-		public const uint AuxText = 2;
-		public const uint LookupTable = 4;
-		public const uint Focus = 8;
-		public const uint Property = 16;
-		public const uint SurroundingText = 32;
+		public const int PreeditText = 1;
+		public const int AuxText = 2;
+		public const int LookupTable = 4;
+		public const int Focus = 8;
+		public const int Property = 16;
+		public const int SurroundingText = 32;
 	}
-
 
 	public delegate void CommitTextHandler(object text);
 	public delegate void CursorDownLookupTableHandler();
@@ -61,12 +59,12 @@ namespace IBusDotNet
 	public delegate void ShowPreditTextHandler();
 	public delegate void UpdateAuxiliaryTextHandler(object text, bool visible);
 	public delegate void UpdateLookupTableHandler(object text, bool visible);
-	public delegate void UpdatePreeditTextHandler(object text, uint cursor_pos, bool visible);
+	public delegate void UpdatePreeditTextHandler(object text, uint cursorPos, bool visible);
 	public delegate void UpdatePropertyHandler(object props);
 
 	// TODO: add more events for the rest of the signals
 	[Interface("org.freedesktop.IBus.InputContext")]
-	public interface InputContext : Introspectable
+	internal interface IBusInputContext : Introspectable
 	{
 		[return: Argument("handled")]
 		bool ProcessKeyEvent(uint keyval, uint keycode, uint state);
@@ -75,7 +73,7 @@ namespace IBusDotNet
 
 		void SetCapabilities(UInt32 caps);
 
-		void PropertyActivate(object prop_name, Int32 state);
+		void PropertyActivate(object propName, Int32 state);
 
 		void FocusIn();
 
@@ -83,6 +81,7 @@ namespace IBusDotNet
 
 		void Reset();
 
+		// the next two methods are no longer in the 1.5.x API
 		void Enable();
 
 		void Disable();
@@ -118,13 +117,12 @@ namespace IBusDotNet
 		event CursorDownLookupTableHandler CursorDownLookupTable;
 		event RegisterPropertiesHandler RegisterProperties;
 		event UpdatePropertyHandler UpdateProperty;
-
 	}
 
 	[Interface("org.freedesktop.IBus.Panel")]
 	public interface Panel : Introspectable
 	{
-		void UpdateLookupTable(object lookup_table, bool visible);
+		void UpdateLookupTable(object lookupTable, bool visible);
 		void StartSetup();
 		void SetCursorLocation(int x, int y, int w, int h);
 		void UpdateAuxiliaryText(object text, bool visible);
@@ -139,7 +137,7 @@ namespace IBusDotNet
 		void UpdateProperty(object prop);
 		void HidePreeditText();
 		void CursorUpLookupTable();
-		void UpdatePreeditText(object text, uint cursor_pos, bool visible);
+		void UpdatePreeditText(object text, uint cursorPos, bool visible);
 		void RegisterProperties(object props);
 		void ShowLookupTable();
 		void CursorDownLookupTable();

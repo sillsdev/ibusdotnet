@@ -239,13 +239,4 @@ namespace IBusDotNet
 		public string Version { get { return GetProperty<string>("version"); } }
 		public string TextDomain { get { return GetProperty<string>("textDomain"); } }
 	}
-
-	public static class IBusEngineDescFactory
-	{
-		/// <summary>Get IBusEngineDesc names in a way tolerant to IBusEngineDesc versions.</summary>
-		public static IBusEngineDesc GetEngineDesc(object engine)
-		{
-			return new BusEngineDesc(BusEngineDesc.CreateEngineDesc(engine.ToString()), engine);
-		}
-	}
 }

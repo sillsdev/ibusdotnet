@@ -1,5 +1,6 @@
 using System;
 using NDesk.DBus;
+using IBusDotNet;
 
 namespace IBusDotNet
 {

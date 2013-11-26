@@ -40,15 +40,15 @@ namespace IBusDotNet
 				return;
 			}
 
-			var ibusWrapper = new IBusDotNet.InputBusWrapper(Connection);
-			object[] engines = ibusWrapper.InputBus.ListEngines();
+			var ibus = new InputBus(Connection);
+			var engines = ibus.ListEngines();
 			if (engines.Length == 0)
 			{
 				Assert.Ignore("Can't run this test without any ibus keyboards installed.");
 				return;
 			}
 
-			Assert.IsNotNull(IBusEngineDescFactory.GetEngineDesc(engines[0]));
+			Assert.IsNotNull(engines[0]);
 		}
 	}
 }

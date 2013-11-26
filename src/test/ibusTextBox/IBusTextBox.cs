@@ -9,12 +9,12 @@ namespace Test
 {
 	public class IBusTextBox : TextBox
 	{
-		IBusConnection connection = null;
-		InputContext inputContext = null;
-		IBusDotNet.InputBusWrapper ibus = null;
+		private IBusConnection connection;
+		private IInputContext inputContext;
+		private InputBus ibus;
 
 		// show the preedit text in here.
-		TextBox preeditTextBox;
+		private TextBox preeditTextBox;
 
 		public IBusTextBox(TextBox textBox)
 		{
@@ -42,8 +42,8 @@ namespace Test
 			connection = IBusConnectionFactory.Create();
 			if (connection != null)
 			{
-				ibus = new IBusDotNet.InputBusWrapper(connection);
-				inputContext = ibus.InputBus.CreateInputContext("MyTextBox");
+				ibus = new InputBus(connection);
+				inputContext = ibus.CreateInputContext("MyTextBox");
 				// Console.WriteLine(inputContext.Introspect());
 
 				inputContext.SetCapabilities(Capabilities.PreeditText |
@@ -116,7 +116,7 @@ namespace Test
 			{
 				switch (msg.Msg) {
 				case WM_CHAR:
-					if (inputContext.ProcessKeyEvent((uint)msg.WParam, 0, 0))
+						if (inputContext.ProcessKeyEvent((int)msg.WParam, 0, 0))
 						return;
 					break;
 				case WM_DESTROY:
@@ -144,7 +144,7 @@ namespace Test
 			preeditTextBox.Show();
 		}
 
-		void UpdatePreeditTextEventHandler(object text, uint cursor_pos, bool visible)
+		void UpdatePreeditTextEventHandler(object text, uint cursorPos, bool visible)
 		{
 			preeditTextBox.Text = String.Empty;
 
