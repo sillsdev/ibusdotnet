@@ -52,4 +52,11 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <None Include="..\..\..\NDesk\NDesk.DBus.dll.config">
+      <Link>NDesk.DBus.dll.config</Link>
+      <Gettext-ScanForTranslations>False</Gettext-ScanForTranslations>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
