@@ -206,7 +206,11 @@ namespace IBusDotNet
 
 		public bool IsEnabled()
 		{
-			return m_inputContext.IsEnabled();
+			// IsEnabled is no longer available in IBus 1.5
+			var x = m_inputContext.Introspect();
+			if (m_inputContext.Introspect().Contains("<method name=\"IsEnabled\""))
+				return m_inputContext.IsEnabled();
+			return true;
 		}
 
 		public void SetEngine(string name)

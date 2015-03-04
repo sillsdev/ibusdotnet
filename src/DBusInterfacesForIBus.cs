@@ -81,7 +81,7 @@ namespace IBusDotNet
 
 		void Reset();
 
-		// the next two methods are no longer in the 1.5.x API
+		// the next three methods are no longer in the 1.5.x API
 		void Enable();
 
 		void Disable();
