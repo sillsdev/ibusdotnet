@@ -39,7 +39,8 @@ namespace IBusDotNet
 		{
 			if (fDisposing)
 			{
-				m_connection.Close();
+				if (m_connection != null)
+					m_connection.Close();
 
 				if (Disposed != null)
 					Disposed(this, EventArgs.Empty);

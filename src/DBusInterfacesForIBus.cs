@@ -435,7 +435,7 @@ namespace IBusDotNet
 		public int EndIndex { get { return (int)Attribute.end_index; }}
 	}
 
-	// See http://ibus.googlecode.com/svn/docs/ibus-1.5/IBusAttribute.html
+	// See http://ibus.github.io/docs/ibus-1.5/IBusAttribute.html
 	public enum IBusAttrUnderline
 	{
 		None = 0,

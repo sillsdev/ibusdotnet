@@ -4,6 +4,7 @@ using System;
 
 namespace IBusDotNet
 {
+	// see http://ibus.github.io/docs/ibus-1.5/IBusInputContext.html
 	public interface IInputContext
 	{
 		bool ProcessKeyEvent(int keyval, int keycode, int state);
@@ -19,6 +20,10 @@ namespace IBusDotNet
 		void FocusOut();
 
 		void Reset();
+
+		// The ibus documentation lists two methods SetSurroundingText and NeedsSurroundingText
+		// which seem to be useful. However, the latter doesn't seem to available over DBus
+		// and trying to use SetSurroundingText results in a strange error message.
 
 		// the next three methods are no longer in the 1.5.x API
 		void Enable();

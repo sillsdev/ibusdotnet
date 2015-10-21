@@ -47,7 +47,7 @@ namespace Test
 				// Console.WriteLine(inputContext.Introspect());
 
 				inputContext.SetCapabilities(Capabilities.PreeditText |
-											 Capabilities.Focus);
+					Capabilities.Focus | Capabilities.SurroundingText);
 
 				// Engine can be programatically selected by:
 				// inputContext.SetEngine("pinyin");
@@ -60,6 +60,7 @@ namespace Test
 				inputContext.ShowPreeditText += ShowPreeditTextEventHandler;
 				inputContext.HidePreeditText += HidePreeditTextEventHandler;
 				inputContext.ForwardKeyEvent += ForwardKeyEventHandler;
+				inputContext.DeleteSurroundingText += DeleteSurroundingText;
 			}
 			else
 			{
@@ -155,17 +156,23 @@ namespace Test
 			}
 		}
 
+		void DeleteSurroundingText (int offset, uint nChars)
+		{
+			if (offset < 0)
+				offset = Text.Length - (int)nChars;
+			if (offset < 0)
+			{
+				offset = 0;
+				nChars = (uint)Text.Length;
+			}
+			Text.Remove(offset, (int)nChars);
+		}
+
 		void CommitTextEventHandler(object text)
 		{
 			IBusText t = IBusText.FromObject(text);
 
-			foreach (char c in t.Text)
-			{
-				Message m = new Message();
-				m.Msg = 258;
-				m.WParam = new IntPtr(c);
-				base.WndProc(ref m);
-			}
+			Text = t.Text;
 		}
 
 		void ForwardKeyEventHandler (uint keyval, uint keycode, uint state)
