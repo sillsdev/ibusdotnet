@@ -1,3 +1,6 @@
 bin/
 obj/
+src/packages/
+build/NuGet.exe
 glob:*.userprefs
+glob:*~
