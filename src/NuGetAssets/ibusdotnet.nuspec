@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+	<id>ibusdotnet</id>
+	<version>$version$</version>
+	<authors>Tom Hindle, Eberhard Beilharz</authors>
+	<owners>Tom Hindle, Eberhard Beilharz</owners>
+	<licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
+	<projectUrl>https://bitbucket.org/hindlemail/ibusdotnet</projectUrl>
+	<requireLicenseAcceptance>false</requireLicenseAcceptance>
+	<description>Managed binding for ibus</description>
+	<copyright>Copyright 2015 SIL International</copyright>
+	<tags>ibus mono</tags>
+  </metadata>
+</package>
