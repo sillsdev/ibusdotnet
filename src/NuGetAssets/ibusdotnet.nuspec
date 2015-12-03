@@ -11,5 +11,8 @@
 	<description>Managed binding for ibus</description>
 	<copyright>Copyright 2015 SIL International</copyright>
 	<tags>ibus mono</tags>
+	<dependencies>
+	  <dependency id="NDesk.DBus" version="0.13.1" />
+	</dependencies>
   </metadata>
 </package>
