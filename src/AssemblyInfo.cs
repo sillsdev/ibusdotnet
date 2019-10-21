@@ -1,22 +1,12 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-// Information about this assembly is defined by the following attributes.
-// Change them to the values specific to your project.
-
-[assembly: AssemblyTitle("ibusdotnet")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-
-// The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".
-// The form "{Major}.{Minor}.*" will automatically update the build and revision,
-// and "{Major}.{Minor}.{Build}.*" will update just the revision.
-
-[assembly: AssemblyVersion("2.0.0.*")]
-
-[assembly: InternalsVisibleTo("ibusdotnetTests")]
+[assembly: InternalsVisibleTo("ibusdotnetTests,PublicKey=0024000004800000140100000" +
+	"6020000002400005253413100080000010001008f69e010b2c85c" +
+	"c78af50bf86f8b95dd42ad421a885db26f27d63eeebbd970142ad7f36884c61194299864d3647d" +
+	"6f170e87cfb5103ca7ce3ac5c5183292d3ae7f499fc7574a58ebab1356df09570316535a6311da" +
+	"0ec76447294764702b7a6e59d6ca241fecd6732a439a2b60a868587cd2d8d1aaa3896c4212cd89" +
+	"956cdaa9eae325f7b8126ca6269b56e10be6e68ccca4e85de87beae65245de20a8ff1d899ec56e" +
+	"2b37d6980ab647f610f36fbd4830df597f3b3661e21a09e7bd02769102bc1c46ca07a59c981ba9" +
+	"fadfacd26d4a4709726efb1a0f2d50631a48b57e44d8ac1d7a91c67e5c64e3fcc81c1c5191ea55" +
+	"4a4363659312af245977cb48495d90")]

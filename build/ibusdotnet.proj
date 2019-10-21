@@ -1,9 +1,29 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
 		<RootDir Condition="'$(RootDir)'==''">$(MSBuildProjectDirectory)/..</RootDir>
+		<Solution>ibusdotnet.sln</Solution>
+		<SolutionDir>$(RootDir)</SolutionDir>
+		<SolutionPath>$(SolutionDir)/$(Solution)</SolutionPath>
+		<Configuration Condition="'$(Configuration)'==''">Release</Configuration>
+		<useNUnit-x86 Condition="'$(OS)'=='Windows_NT'">true</useNUnit-x86>
+		<useNUnit-x86 Condition="'$(OS)'!='Windows_NT'">false</useNUnit-x86>
+		<OutputTestsDir>$(RootDir)/ibusdotnetTests/bin/$(Configuration)</OutputTestsDir>
+		<OutputDir>$(RootDir)/output</OutputDir>
+		<excludedCategories>ICU50 Deprecated;ByHand;</excludedCategories>
+		<excludedCategories Condition="'$(IsOnWindows)'!='true'">$(excludedCategories)KnownMonoIssue;</excludedCategories>
+		<Configuration Condition="'$(Configuration)'==''">Release</Configuration>
+		<DotNetCLI Condition="'$(DotNetCLI)' == ''">dotnet</DotNetCLI>
+
+		<NuGetPackageDir Condition="'$(OS)'=='Windows_NT'">$(UserProfile)/.nuget/packages</NuGetPackageDir>
+		<NuGetPackageDir Condition="'$(OS)'!='Windows_NT'">$(Home)/.nuget/packages</NuGetPackageDir>
+
+		<RestartBuild Condition="!Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')">true</RestartBuild>
+		<RestartBuild Condition="Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')">false</RestartBuild>
 	</PropertyGroup>
 
-	<UsingTask TaskName="NUnit" AssemblyFile="$(RootDir)/build/Palaso.BuildTasks.dll" />
+	<UsingTask TaskName="SIL.BuildTasks.UnitTestTasks.NUnit3"
+		AssemblyFile="$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
+		Condition="Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
 	<UsingTask TaskName="NUnitTeamCity"
 		AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"
 		Condition=" '$(teamcity_version)' != '' And '$(OS)'=='Windows_NT'"/>
@@ -13,36 +33,22 @@
 
 	<Import Project="NuGet.targets"/>
 
-	<PropertyGroup>
-		<Solution>ibusdotnet.sln</Solution>
-		<SolutionDir>$(RootDir)/src</SolutionDir>
-		<SolutionPath>$(SolutionDir)/$(Solution)</SolutionPath>
-		<Configuration Condition="'$(Configuration)'==''">Release</Configuration>
-		<useNUnit-x86 Condition="'$(OS)'=='Windows_NT'">true</useNUnit-x86>
-		<useNUnit-x86 Condition="'$(OS)'!='Windows_NT'">false</useNUnit-x86>
-		<OutputTestsDir>$(RootDir)/ibusdotnetTests/bin/$(Configuration)</OutputTestsDir>
-	</PropertyGroup>
+	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites">
+		<Message Text="RestartBuild=$(RestartBuild)"/>
+		<Message Text="MSBuildProjectDirectory=$(MSBuildProjectDirectory)"/>
+		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -version 2.1.0 -source "$(PackageSources)" -solutionDirectory "$(MSBuildProjectDirectory)/."' />
+	</Target>
 
 	<Target Name="Build">
+		<CallTarget Targets="RestoreBuildTasks"/>
+		<CallTarget Targets="BuildInternal" Condition="!$(RestartBuild)" />
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="BuildInternal" Properties="Configuration=$(Configuration);DotNetCLI=$(DotNetCLI);teamcity_version=$(teamcity_version);teamcity_agent_home_dir=$(teamcity_agent_home_dir)" Condition="$(RestartBuild)" />
+	</Target>
+
+	<Target Name="BuildInternal">
 		<CallTarget Targets="Clean"/>
 		<CallTarget Targets="Compile"/>
 		<Message Text="Build Complete"/>
-	</Target>
-
-	<ItemGroup>
-		<ExistingObjectFiles
-			Include="$(RootDir)/bin/$(Configuration)/**/*"
-			Exclude="$(RootDir)/.hg/**/*"
-		/>
-	</ItemGroup>
-
-	<Target Name="Clean">
-		<Delete Files="@(ExistingObjectFiles)" />
-		<Delete Condition="'$(OS)'=='Windows_NT'"
-			 Files="$(RootDir)/**/obj/**/*" />
-		<Exec Condition="'$(OS)'!='Windows_NT'"
-			Command="find . %5c( -name obj -o -name bin -o -name test-results %5c) -type d -print0 | xargs -0 rm -rf"
-			WorkingDirectory="$(RootDir)" />
 	</Target>
 
 	<Target Name="Compile" DependsOnTargets="RestorePackages">
@@ -51,6 +57,17 @@
 			Targets="Build"
 			Properties="Configuration=$(Configuration)" />
 	</Target>
+
+	<Target Name="Clean">
+		<ItemGroup>
+			<ExistingObjectFiles
+				Include="$(OutputDir)/$(Configuration)/**/*;$(RootDir)/**/obj/**/*;$(RootDir)/**/bin/**/*;$(RootDir)/**/test-results/**/*"
+				Exclude="$(RootDir)/.hg/**/*;$(RootDir)/.git/**/*" />
+		</ItemGroup>
+
+		<Delete Files="@(ExistingObjectFiles)" />
+	</Target>
+
 
 	<Target Name="Test" DependsOnTargets="Build">
 		<CallTarget Targets="TestOnly"/>
@@ -84,4 +101,17 @@
 			OutputXmlFile="$(OutputTestsDir)/TestResults.xml"/>
 	</Target>
 
+	<Target Name="Restore">
+		<MSBuild
+			Projects="$(SolutionPath)"
+			Targets="Restore"
+			Properties="Configuration=$(Configuration)" />
+	</Target>
+
+	<Target Name="Pack">
+		<MSBuild
+			Projects="$(SolutionPath)"
+			Targets="Pack"
+			Properties="Configuration=$(Configuration)" />
+	</Target>
 </Project>

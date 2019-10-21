@@ -1,7 +1,9 @@
 bin/
 obj/
-src/packages/
-src/NuGetBuild/
-build/NuGet.exe
+output/
+.idea/
+.vs/
+packages/
+build/nuget.exe
 *.userprefs
 *~
