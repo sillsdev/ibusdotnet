@@ -27,6 +27,7 @@ See full changelog at https://github.com/sillsdev/ibusdotnet/blob/feature/nuget/
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="NDesk.DBus" Version="0.15.0" />
+    <PackageReference Include="SIL.ReleaseTasks" Version="2.2.0" />
   </ItemGroup>
 
 </Project>
