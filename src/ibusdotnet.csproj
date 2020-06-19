@@ -7,7 +7,7 @@
     <Company>SIL International</Company>
     <Authors>Tom Hindle, Eberhard Beilharz</Authors>
     <Product>ibusdotnet</Product>
-    <Copyright>Copyright © 2015-2019 SIL International</Copyright>
+    <Copyright>Copyright © 2015-2020 SIL International</Copyright>
     <OutputPath>../output/$(Configuration)</OutputPath>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../ibusdotnet.snk</AssemblyOriginatorKeyFile>
@@ -18,7 +18,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <AppendToReleaseNotesProperty><![CDATA[
-See full changelog at https://github.com/sillsdev/ibusdotnet/blob/feature/nuget/CHANGELOG.md]]>
+See full changelog at https://github.com/sillsdev/ibusdotnet/blob/master/CHANGELOG.md]]>
     </AppendToReleaseNotesProperty>
   </PropertyGroup>
 
