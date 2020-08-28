@@ -108,7 +108,7 @@ namespace IBusDotNet
 				{
 					var line = streamReader.ReadLine();
 
-					if (!string.IsNullOrEmpty(line) && line.Contains(IBUS_ADDRESS))
+					if (!string.IsNullOrEmpty(line) && !line.StartsWith("#") && line.Contains(IBUS_ADDRESS))
 					{
 						var tokens = line.Split("=".ToCharArray(), 2);
 						if (tokens.Length != 2 || tokens[1] == string.Empty)
