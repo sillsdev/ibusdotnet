@@ -16,6 +16,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.0.3] - 2020-08-28
+
+### Fixed
+
+- Remove dependency on `SIL.ReleaseTasks`
+
 ## [2.0.2] - 2020-08-28
 
 ### Fixed

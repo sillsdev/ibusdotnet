@@ -23,11 +23,9 @@ See full changelog at https://github.com/sillsdev/ibusdotnet/blob/master/CHANGEL
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitVersionTask" Version="5.3.6">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+    <PackageReference Include="GitVersionTask" Version="5.3.7" PrivateAssets="all" />
     <PackageReference Include="NDesk.DBus" Version="0.15.0" />
-    <PackageReference Include="SIL.ReleaseTasks" Version="2.3.2" />
+    <PackageReference Include="SIL.ReleaseTasks" Version="2.3.3" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>
