@@ -5,23 +5,28 @@ using System.Diagnostics;
 
 namespace IBusDotNet
 {
+	// ReSharper disable once InconsistentNaming
 	/// <summary>
 	/// static class that allow creation of DBus connection to IBus's session DBus.
 	/// </summary>
 	public static class IBusConnectionFactory
 	{
-		const string ENV_IBUS_ADDRESS = "IBUS_ADDRESS";
-		const string IBUS_ADDRESS = "IBUS_ADDRESS";
+		// ReSharper disable InconsistentNaming
+		private const string ENV_IBUS_ADDRESS = "IBUS_ADDRESS";
+		private const string IBUS_ADDRESS = "IBUS_ADDRESS";
+		// ReSharper restore InconsistentNaming
+
+		private static IBusConnection singleConnection;
 
 		/// <summary>
 		/// Gets the local machine identifier.
 		/// </summary>
-		/// <remarks>The path to the machine-id file is hardcoded in ibus sources as
-		/// /var/lib/dbus/machine-id (src/ibusshare.c).</remarks>
 		private static string LocalMachineId
 		{
 			get
 			{
+				// The path to the machine-id file is hardcoded in ibus sources as
+				// /var/lib/dbus/machine-id (src/ibusshare.c).
 				using (var machineIdFile = new StreamReader("/var/lib/dbus/machine-id"))
 				{
 					return machineIdFile.ReadToEnd().TrimEnd('\n');
@@ -36,16 +41,16 @@ namespace IBusDotNet
 		internal static int GetDisplayNumber(out string hostname)
 		{
 			// default to 0 if we can't find from DISPLAY ENV var
-			int displayNumber = 0;
+			var displayNumber = 0;
 			hostname = null;
-			string display = System.Environment.GetEnvironmentVariable("DISPLAY");
+			var display = Environment.GetEnvironmentVariable("DISPLAY");
 			if (!string.IsNullOrEmpty(display))
 			{
-				// DISPLAY is hostname:displaynumber.screennumber
-				// or more nomally ':0.0"
+				// DISPLAY is hostname:displayNumber.screenNumber
+				// or more normally ':0.0"
 				// so look for first number after :
-				int start = display.IndexOf(':');
-				int end = display.IndexOf('.', start >= 0 ? start : 0);
+				var start = display.IndexOf(':');
+				var end = display.IndexOf('.', start >= 0 ? start : 0);
 				if (end < 0)
 					end = display.Length;
 				if (start >= 0)
@@ -63,76 +68,63 @@ namespace IBusDotNet
 		/// <summary>
 		/// Attempts to return the file name of the ibus server config file that contains the socket name.
 		/// </summary>
-		static string IBusConfigFilename()
+		private static string GetIBusConfigFilename()
 		{
 			// Implementation Plan:
 			// Read file in $XDG_CONFIG_HOME/ibus/bus/* if ($XDG_CONFIG_HOME) not set then $HOME/.config/ibus/bus/*
-			// Actual file is called 'localmachineid'-'hostname'-'displaynumber'
+			// Actual file is called 'localMachineId'-'hostname'-'displayNumber'
 			// eg: 5a2f89ae5421972c24f8a4414b0495d7-unix-0
 			// could check $DISPLAY to see if we are running not on display 0 or not.
-			// localmachineid comes from /var/lib/dbus/machine-id
+			// localMachineId comes from /var/lib/dbus/machine-id
 
-			string directory = System.Environment.GetEnvironmentVariable("XDG_CONFIG_HOME");
-			if (String.IsNullOrEmpty(directory))
-			{
-				directory = System.Environment.GetEnvironmentVariable("HOME");
+			var directory = Path.Combine(
+				Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+				"ibus", "bus");
 
-				if (String.IsNullOrEmpty(directory))
-					throw new ApplicationException("$XDG_CONFIG_HOME or $HOME Environment not set");
+			var displayNumber = GetDisplayNumber(out var hostname);
 
-				directory = Path.Combine(directory, ".config");
-			}
-			directory = Path.Combine(directory, "ibus");
-			directory = Path.Combine(directory, "bus");
+			var fileName = Path.Combine(directory, $"{LocalMachineId}-{hostname}-{displayNumber}");
 
-			string hostname;
-			int displayNumber = GetDisplayNumber(out hostname);
+			if (File.Exists(fileName))
+				return fileName;
 
-			string fileName = Path.Combine(directory,
-				string.Format("{0}-{1}-{2}", LocalMachineId, hostname, displayNumber));
+			Debug.Print("Unable to locate IBus Config file {0}", fileName);
+			return null;
 
-			if (!File.Exists(fileName))
-			{
-				Debug.Print("Unable to locate IBus Config file {0}", fileName);
-				return null;
-			}
-
-			return fileName;
 		}
 
 		/// <summary>
 		/// Read config file and return the socket name from it.
 		/// </summary>
-		static string GetSocket(string filename)
+		private static string GetSocket(string configFilename)
 		{
 			// Look for line
-			// Set Enviroment 'DBUS_SESSION_BUS_ADDRESS' so DBus Library actually connects to IBus' DBus.
+			// Set Environment 'DBUS_SESSION_BUS_ADDRESS' so DBus Library actually connects to IBus' DBus.
 			// IBUS_ADDRESS=unix:abstract=/tmp/dbus-DVpIKyfU9k,guid=f44265fa3b2781284d54c56a4b0d83f3
 
-			using (StreamReader s = new StreamReader(filename))
+			using (var streamReader = new StreamReader(configFilename))
 			{
-				string line = String.Empty;
-				while (line != null)
+				while (!streamReader.EndOfStream)
 				{
-					line = s.ReadLine();
+					var line = streamReader.ReadLine();
 
-					if (line.Contains(IBUS_ADDRESS))
+					if (!string.IsNullOrEmpty(line) && line.Contains(IBUS_ADDRESS))
 					{
-						string[] toks = line.Split("=".ToCharArray(), 2);
-						if (toks.Length != 2 || toks[1] == String.Empty)
-							throw new ApplicationException(String.Format("IBUS config file : {0} not as expected for line {1}. Expected IBUS_ADDRESS='some socket'", filename, line));
+						var tokens = line.Split("=".ToCharArray(), 2);
+						if (tokens.Length != 2 || tokens[1] == string.Empty)
+							throw new ApplicationException(
+								$"IBus config file '{configFilename}' not as expected for line {line}. Expected IBUS_ADDRESS='some socket'");
 
-						return toks[1];
+						return tokens[1];
 					}
 				}
 			}
-			throw new ApplicationException(String.Format("IBUS config file : {0} doesn't contain {1} token", filename, IBUS_ADDRESS));
+			throw new ApplicationException($"IBus config file '{configFilename}' doesn't contain {IBUS_ADDRESS} token");
 		}
 
-		static IBusConnection singleConnection = null;
 		/// <summary>
 		/// Create a DBus to connection to the IBus system in use.
-		/// Returns null if it can't conenct to ibus.
+		/// Returns null if it can't connect to ibus.
 		/// </summary>
 		public static IBusConnection Create()
 		{
@@ -144,18 +136,18 @@ namespace IBusDotNet
 
 			try
 			{
-				// if Enviroment var IBUS_ADDRESS doesn't exist then attempt to read it from IBus server settings file.
-				string socketName = System.Environment.GetEnvironmentVariable(ENV_IBUS_ADDRESS);
-				if (String.IsNullOrEmpty(socketName))
+				// if Environment var IBUS_ADDRESS doesn't exist then attempt to read it from IBus server settings file.
+				var socketName = Environment.GetEnvironmentVariable(ENV_IBUS_ADDRESS);
+				if (string.IsNullOrEmpty(socketName))
 				{
-					string configFileName = IBusConfigFilename();
+					var configFileName = GetIBusConfigFilename();
 					if (!File.Exists(configFileName))
 						return null;
 
 					socketName = GetSocket(configFileName);
 				}
 
-				if (String.IsNullOrEmpty(socketName))
+				if (string.IsNullOrEmpty(socketName))
 					return null;
 
 				// Equivalent to having $DBUS_SESSION_BUS_ADDRESS set
@@ -179,8 +171,7 @@ namespace IBusDotNet
 
 		public static void DestroyConnection()
 		{
-			if (singleConnection != null)
-				singleConnection.Close();
+			singleConnection?.Close();
 		}
 	}
 }
