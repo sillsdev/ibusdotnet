@@ -22,8 +22,7 @@ namespace IBusDotNet
 		[TearDown]
 		public void TearDown()
 		{
-			if (Connection != null)
-				Connection.Dispose();
+			Connection?.Dispose();
 			Connection = null;
 		}
 

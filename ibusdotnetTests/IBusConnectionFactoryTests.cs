@@ -16,13 +16,13 @@ namespace IBusDotNet
 	{
 		private string m_OriginalDisplay;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			m_OriginalDisplay = Environment.GetEnvironmentVariable("DISPLAY");
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void FixtureTearDown()
 		{
 			Environment.SetEnvironmentVariable("DISPLAY", m_OriginalDisplay);
@@ -32,60 +32,54 @@ namespace IBusDotNet
 		public void GetDisplayNumber_NoEnv()
 		{
 			Environment.SetEnvironmentVariable("DISPLAY", null);
-			string hostname;
-			int displayNumber = IBusConnectionFactory.GetDisplayNumber(out hostname);
-			Assert.AreEqual(0, displayNumber);
-			Assert.AreEqual("unix", hostname);
+			var displayNumber = IBusConnectionFactory.GetDisplayNumber(out var hostname);
+			Assert.That(displayNumber, Is.EqualTo(0));
+			Assert.That(hostname, Is.EqualTo("unix"));
 		}
 
 		[Test]
 		public void GetDisplayNumber_DisplayOnly()
 		{
 			Environment.SetEnvironmentVariable("DISPLAY", ":5");
-			string hostname;
-			int displayNumber = IBusConnectionFactory.GetDisplayNumber(out hostname);
-			Assert.AreEqual(5, displayNumber);
-			Assert.AreEqual("unix", hostname);
+			var displayNumber = IBusConnectionFactory.GetDisplayNumber(out var hostname);
+			Assert.That(displayNumber, Is.EqualTo(5));
+			Assert.That(hostname, Is.EqualTo("unix"));
 		}
 
 		[Test]
 		public void GetDisplayNumber_DisplayWithScreen()
 		{
 			Environment.SetEnvironmentVariable("DISPLAY", ":6.7");
-			string hostname;
-			int displayNumber = IBusConnectionFactory.GetDisplayNumber(out hostname);
-			Assert.AreEqual(6, displayNumber);
-			Assert.AreEqual("unix", hostname);
+			var displayNumber = IBusConnectionFactory.GetDisplayNumber(out var hostname);
+			Assert.That(displayNumber, Is.EqualTo(6));
+			Assert.That(hostname, Is.EqualTo("unix"));
 		}
 
 		[Test]
 		public void GetDisplayNumber_DisplayWithHostname()
 		{
 			Environment.SetEnvironmentVariable("DISPLAY", "foo:8.0");
-			string hostname;
-			int displayNumber = IBusConnectionFactory.GetDisplayNumber(out hostname);
-			Assert.AreEqual(8, displayNumber);
-			Assert.AreEqual("foo", hostname);
+			var displayNumber = IBusConnectionFactory.GetDisplayNumber(out var hostname);
+			Assert.That(displayNumber, Is.EqualTo(8));
+			Assert.That(hostname, Is.EqualTo("foo"));
 		}
 
 		[Test]
 		public void GetDisplayNumber_DisplayWithHostnameWithPeriod()
 		{
 			Environment.SetEnvironmentVariable("DISPLAY", "foo.local:8.0");
-			string hostname;
-			int displayNumber = IBusConnectionFactory.GetDisplayNumber(out hostname);
-			Assert.AreEqual(8, displayNumber);
-			Assert.AreEqual("foo.local", hostname);
+			var displayNumber = IBusConnectionFactory.GetDisplayNumber(out var hostname);
+			Assert.That(displayNumber, Is.EqualTo(8));
+			Assert.That(hostname, Is.EqualTo("foo.local"));
 		}
 
 		[Test]
 		public void GetDisplayNumber_Invalid()
 		{
 			Environment.SetEnvironmentVariable("DISPLAY", "f.1");
-			string hostname;
-			int displayNumber = IBusConnectionFactory.GetDisplayNumber(out hostname);
-			Assert.AreEqual(0, displayNumber);
-			Assert.AreEqual("unix", hostname);
+			var displayNumber = IBusConnectionFactory.GetDisplayNumber(out var hostname);
+			Assert.That(displayNumber, Is.EqualTo(0));
+			Assert.That(hostname, Is.EqualTo("unix"));
 		}
 	}
 }
