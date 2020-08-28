@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.0.2] - 2020-08-28
+
 ### Fixed
 
 - Ignore comments in IBus config file. This fixes things on Ubuntu 20.04.
