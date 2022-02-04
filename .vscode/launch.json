@@ -1,0 +1,28 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // Attaches to a program listening for a debugger, such as from running:
+      // mono --debug --debugger-agent="address=localhost:55555,transport=dt_socket,server=y,suspend=n" App.exe
+      "name": "Attach",
+      "type": "mono",
+      "request": "attach",
+      "address": "localhost",
+      "port": 55555
+    },
+    {
+      "name": "Launch ibusTextBoxTest",
+      "env": {
+        // Use this mono.
+        // "PATH": "/opt/mono5-sil/bin:${env:PATH}",
+      },
+      "type": "mono",
+      "request": "launch",
+      "program": "${workspaceRoot}/ibusTextBoxTest/bin/Debug/ibusTextBox.exe",
+      "cwd": "${workspaceRoot}",
+    },
+  ]
+}
