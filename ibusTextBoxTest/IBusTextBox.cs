@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Windows.Forms;
 using IBusDotNet;
 
@@ -61,6 +62,14 @@ namespace Test
 				inputContext.HidePreeditText += HidePreeditTextEventHandler;
 				inputContext.ForwardKeyEvent += ForwardKeyEventHandler;
 				inputContext.DeleteSurroundingText += DeleteSurroundingText;
+
+				Console.WriteLine($"Input context engine: {inputContext.GetEngine()} Name: {inputContext.GetEngine().Name}");
+				Console.WriteLine($"IBus address: {ibus.GetAddress()}");
+				Console.WriteLine($"IBus current input context: {ibus.CurrentInputContext()}");
+				string engines = string.Join(", ", ibus.ListEngines().Select(e => e.Name));
+				string activeEngines = string.Join(", ", ibus.ListActiveEngines().Select(e => e.Name));
+				Console.WriteLine($"IBus engines: {ibus.ListEngines().Length}\n{engines}");
+				Console.WriteLine($"IBus active engines: {ibus.ListActiveEngines().Length}\n{activeEngines}");
 			}
 			else
 			{
@@ -77,6 +86,9 @@ namespace Test
 				inputContext.FocusIn();
 			}
 			base.OnGotFocus(e);
+
+			inputContext.SetEngine("table:thai");
+			Console.WriteLine($"Switched to input context engine: {inputContext.GetEngine()} Name: {inputContext.GetEngine().Name}");
 		}
 
 		protected override void OnLostFocus(EventArgs e)
