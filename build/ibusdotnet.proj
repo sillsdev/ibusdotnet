@@ -7,7 +7,7 @@
 		<Configuration Condition="'$(Configuration)'==''">Release</Configuration>
 		<useNUnit-x86 Condition="'$(OS)'=='Windows_NT'">true</useNUnit-x86>
 		<useNUnit-x86 Condition="'$(OS)'!='Windows_NT'">false</useNUnit-x86>
-		<OutputTestsDir>$(RootDir)/ibusdotnetTests/bin/$(Configuration)</OutputTestsDir>
+		<OutputTestsDir>$(RootDir)/output/$(Configuration)/net461</OutputTestsDir>
 		<OutputDir>$(RootDir)/output</OutputDir>
 		<excludedCategories>ICU50 Deprecated;ByHand;</excludedCategories>
 		<excludedCategories Condition="'$(IsOnWindows)'!='true'">$(excludedCategories)KnownMonoIssue;</excludedCategories>
@@ -19,11 +19,13 @@
 
 		<RestartBuild Condition="!Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')">true</RestartBuild>
 		<RestartBuild Condition="Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')">false</RestartBuild>
+		<TeamCity Condition="'$(teamcity_version)' != ''">true</TeamCity>
+		<TeamCity Condition="'$(teamcity_version)' == ''">false</TeamCity>
 	</PropertyGroup>
 
-	<UsingTask TaskName="SIL.BuildTasks.UnitTestTasks.NUnit3"
-		AssemblyFile="$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
-		Condition="Exists('$(MSBuildProjectDirectory)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
+	<UsingTask TaskName="NUnit3"
+		AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
+		Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
 	<UsingTask TaskName="NUnitTeamCity"
 		AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)"
 		Condition=" '$(teamcity_version)' != '' And '$(OS)'=='Windows_NT'"/>
@@ -36,7 +38,9 @@
 	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites">
 		<Message Text="RestartBuild=$(RestartBuild)"/>
 		<Message Text="MSBuildProjectDirectory=$(MSBuildProjectDirectory)"/>
-		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -version 2.1.0 -source "$(PackageSources)" -solutionDirectory "$(MSBuildProjectDirectory)/."' />
+		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -version 2.3.1 -solutionDirectory "$(RootDir)"' />
+		<!-- Install NUnit.Console which has the required extensions as dependencies -->
+		<Exec Command='$(NuGetCommand) install NUnit.Console -excludeVersion -version 3.11.1 -solutionDirectory "$(RootDir)"' />
 	</Target>
 
 	<Target Name="Build">
@@ -90,15 +94,16 @@
 		<ItemGroup>
 			<TestAssemblies Include="$(OutputTestsDir)/*Tests.dll"/>
 		</ItemGroup>
-
-		<NUnit Assemblies="@(TestAssemblies)"
-			ToolPath="$(SolutionDir)/packages/NUnit.Runners.2.6.4/tools"
-			TestInNewThread="false"
-			ExcludeCategory="$(excludedCategories)$(ExtraExcludeCategories)"
+		<NUnit3
+			Assemblies="@(TestAssemblies)"
+			ToolPath="$(RootDir)/packages/NUnit.ConsoleRunner/tools"
+			ExcludeCategory="$(ExtraExcludeCategories)$(excludedCategories)"
 			WorkingDirectory="$(OutputTestsDir)"
 			Force32Bit="$(useNUnit-x86)"
 			Verbose="true"
-			OutputXmlFile="$(OutputTestsDir)/TestResults.xml"/>
+			UseNUnit3Xml="false"
+			OutputXmlFile="$(OutputTestsDir)/TestResults.xml"
+			TeamCity="$(TeamCity)"/>
 	</Target>
 
 	<Target Name="Restore">
