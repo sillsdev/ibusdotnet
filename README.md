@@ -8,8 +8,20 @@ Get the [ibusdotnet](https://www.nuget.org/packages/ibusdotnet/) nuget package.
 
 ## Building from source
 
-The project can be build with the following command:
+The project can be built with the following command:
 
 ```bash
-msbuild /t:Build build/ibusdotnet.proj
+msbuild build/ibusdotnet.proj -t:Build
+```
+
+Run tests:
+
+```bash
+msbuild build/ibusdotnet.proj -t:Test
+```
+
+Compile test app:
+
+```bash
+msbuild ibusTextBoxTest
 ```
