@@ -38,6 +38,18 @@ namespace IBusDotNet
 		}
 
 		[Test]
+		public void GetDisplayNumber_Flatpak()
+		{
+			string displayInFlatpak = ":99.0";
+			Environment.SetEnvironmentVariable("DISPLAY", displayInFlatpak);
+			Environment.SetEnvironmentVariable("FLATPAK_ID", "org.foo.ClientApp");
+			var displayNumber = IBusConnectionFactory.GetDisplayNumber(out var hostname);
+			int assumedDisplayWhenFlatpak = 0;
+			Assert.That(displayNumber, Is.EqualTo(assumedDisplayWhenFlatpak));
+			Assert.That(hostname, Is.EqualTo("unix"));
+		}
+
+		[Test]
 		public void GetDisplayNumber_DisplayOnly()
 		{
 			Environment.SetEnvironmentVariable("DISPLAY", ":5");

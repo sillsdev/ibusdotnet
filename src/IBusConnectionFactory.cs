@@ -26,8 +26,9 @@ namespace IBusDotNet
 			get
 			{
 				// The path to the machine-id file is hardcoded in ibus sources as
-				// /var/lib/dbus/machine-id (src/ibusshare.c).
-				using (var machineIdFile = new StreamReader("/var/lib/dbus/machine-id"))
+				// /etc/machine-id or /var/lib/dbus/machine-id (src/ibusshare.c).
+				// /etc/machine-id is in flatpak.
+				using (var machineIdFile = new StreamReader("/etc/machine-id"))
 				{
 					return machineIdFile.ReadToEnd().TrimEnd('\n');
 				}
@@ -62,6 +63,12 @@ namespace IBusDotNet
 			if (string.IsNullOrEmpty(hostname))
 				hostname = "unix";
 
+			if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("FLATPAK_ID")))
+			{
+				// Flatpak changes DISPLAY. Assume the host is display 0.
+				displayNumber = 0;
+			}
+
 			return displayNumber;
 		}
 
@@ -75,11 +82,15 @@ namespace IBusDotNet
 			// Actual file is called 'localMachineId'-'hostname'-'displayNumber'
 			// eg: 5a2f89ae5421972c24f8a4414b0495d7-unix-0
 			// could check $DISPLAY to see if we are running not on display 0 or not.
-			// localMachineId comes from /var/lib/dbus/machine-id
+			// localMachineId comes from /etc/machine-id
 
-			var directory = Path.Combine(
-				Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-				"ibus", "bus");
+			// We want to use the actual config home on the host, not an application-specific flatpak one. So
+			// allow a running application to specify the location of the config home that is external to a flatpak
+			// application, by setting USER_CONFIG_HOME.
+
+			string configHome = Environment.GetEnvironmentVariable("USER_CONFIG_HOME") ??
+				Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+			var directory = Path.Combine(configHome,"ibus", "bus");
 
 			var displayNumber = GetDisplayNumber(out var hostname);
 

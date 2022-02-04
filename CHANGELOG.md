@@ -16,6 +16,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Connect when running in Flatpak. App needs to set USER_CONFIG_HOME to host
+  XDG_CONFIG_HOME. Flatpak is detected from the presence of FLATPAK_ID.
+
 ## [2.0.3] - 2020-08-28
 
 ### Fixed
