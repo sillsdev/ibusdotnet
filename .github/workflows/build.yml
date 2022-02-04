@@ -1,0 +1,41 @@
+# Copyright (c) 2022 SIL International
+# This software is licensed under the MIT License (http://opensource.org/licenses/MIT)
+
+name: Build
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master, develop ]
+  workflow_dispatch:
+
+env:
+  BUILD_PROJECT: "build/ibusdotnet.proj"
+
+jobs:
+  build:
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        os: ["windows-latest", "ubuntu-latest"]
+        build_configuration: ["Debug", "Release"]
+      fail-fast: false
+
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v2.3.4
+      with:
+        # GitVersion needs unshallow
+        fetch-depth: 0
+
+    - name: Add MSBuild to PATH (Windows)
+      if: matrix.os == 'windows-latest'
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    - name: Build
+      run: msbuild "${{env.BUILD_PROJECT}}" -t:Build -p:Configuration=${{matrix.build_configuration}}
+
+    - name: Test
+      run: msbuild "${{env.BUILD_PROJECT}}" -t:Test -p:Configuration=${{matrix.build_configuration}}
